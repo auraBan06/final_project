@@ -7,9 +7,15 @@ import { Query, Mutation } from 'react-apollo';
 const GET_LOGO = gql`
     query logo($logoId: String) {
         logo(id: $logoId) {
-            _id
+             _id
             text
             color
+            backgroundColor
+            borderColor
+            borderRadius
+            borderWidth
+            margin
+            padding
             fontSize
             lastUpdate
         }
@@ -48,6 +54,29 @@ class ViewLogoScreen extends Component {
                                         <dd>{data.logo.text}</dd>
                                         <dt>Color:</dt>
                                         <dd>{data.logo.color}</dd>
+
+                                        <dt>Background Color:</dt>
+                                        <dd>{data.logo.backgroundColor}</dd>
+
+                                        <dt>Border Color:</dt>
+                                        <dd>{data.logo.borderColor}</dd>
+
+                                        <dt>Border Radius:</dt>
+                                        <dd>{data.logo.borderRadius}</dd>
+
+                                        <dt>Border Width:</dt>
+                                        <dd>{data.logo.borderWidth}</dd>
+
+                                        <dt>Margin:</dt>
+                                        <dd>{data.logo.margin}</dd>
+
+                                        <dt>Padding:</dt>
+                                        <dd>{data.logo.padding}</dd>
+
+
+
+
+
                                         <dt>Font Size:</dt>
                                         <dd>{data.logo.fontSize}</dd>
                                         <dt>Last Updated:</dt>
