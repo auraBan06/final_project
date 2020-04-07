@@ -28,22 +28,24 @@ class HomeScreen extends Component {
                     return (
                         <div className="container row">
                             <div className="col s4">
-                                <h3>Recent Work</h3>
+                                <h3 style={headerStyle} >Recent Work</h3>
 
                                 {data.logos.sort((a, b) => b.lastUpdate > a.lastUpdate).map((logo, index) => (
-                                    <div key={index} className='home_logo_link'
-                                        style={{ cursor: "pointer" }}>
-                                        <Link to={`/view/${logo._id}`}>{logo.text}</Link>
-                                    </div>
+
+
+
+                                        <Link to={`/view/${logo._id}`}> <div key={index} className='home_logo_link'
+                                                                             style={logoStyle} >{logo.text}</div></Link>
+
                                 ))}
                             </div>
                             <div className="col s8">
                                 <div id="home_banner_container">
-                                    @todo<br />
-                                    List Maker
+                                    <br />
+                                    goLogoLo
                                 </div>
                                 <div>
-                                    <Link id="add_logo_button" to="/create">Add Logo</Link>
+                                    <Link style={newLogoStyle} id="add_logo_button" to="/create">Add Logo</Link>
                                 </div>
                             </div>
                         </div>
@@ -54,5 +56,43 @@ class HomeScreen extends Component {
         );
     }
 }
+
+
+const logoStyle = {
+
+    borderStyle: "solid",
+    cursor: "pointer",
+    background: "#f4511e",
+
+    color: "white",
+    padding: "16px 32px",
+
+    font: "16px",
+    margin: "4px 2px",
+
+    borderRadius: "30px"
+
+}
+
+const newLogoStyle={
+    cursor: "pointer",
+    background: "#f4511e",
+    padding: "30px",
+    color: "white",
+    fontSize: "20px",
+    borderRadius: "30px",
+    borderStyle: "solid",
+    borderColor: "white",
+    borderWidth: "10px",
+    fontWeight: "bold",
+
+
+};
+
+
+const headerStyle={
+    color:"white",
+
+};
 
 export default HomeScreen;

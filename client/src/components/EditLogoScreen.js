@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import gql from "graphql-tag";
 import { Query, Mutation } from "react-apollo";
+import TextEditWorkspace from "./TextEditWorkspace";
 
 const GET_LOGO = gql`
     query logo($logoId: String) {
@@ -52,6 +53,8 @@ const UPDATE_LOGO = gql`
 
 class EditLogoScreen extends Component {
 
+
+
     render() {
         let text, color, fontSize, backgroundColor, borderColor, borderRadius, borderWidth, margin, padding;
         return (
@@ -61,9 +64,16 @@ class EditLogoScreen extends Component {
                     if (error) return `Error! ${error.message}`;
 
                     return (
-                        <Mutation mutation={UPDATE_LOGO} key={data.logo._id} onCompleted={() => this.props.history.push(`/`)}>
+                        <Mutation  mutation={UPDATE_LOGO} key={data.logo._id} onCompleted={() => this.props.history.push(`/`)}>
                             {(updateLogo, { loading, error }) => (
-                                <div className="container">
+
+                                <div className="row">
+
+
+
+                                <div className="container col-sm-6">
+
+
                                     <div className="panel panel-default">
                                         <div className="panel-heading">
                                             <h4><Link to="/">Home</Link></h4>
@@ -168,11 +178,25 @@ class EditLogoScreen extends Component {
                                         </div>
                                     </div>
                                 </div>
+
+                                    <div class="col-sm-6">
+
+                                        <TextEditWorkspace logo={data.logo} />
+
+                                    </div>
+
+
+
+                                </div>
                             )}
+
                         </Mutation>
                     );
                 }}
             </Query>
+
+
+
         );
     }
 }

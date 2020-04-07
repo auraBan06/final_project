@@ -14,13 +14,14 @@
 }
 
 body {
-  background-color: var(--swatch-foundation);
+  background-color: white;
   font-family: 'Lexend Exa';
 }
 
 #home_banner_container {
-  background-image: linear-gradient(to bottom,         
-  #b8b808, #636723);
+  background-image: linear-gradient(to bottom,
+  #f4511e, white);
+
   color: white;
   font-size: 48pt;
   border-color: black;
@@ -30,4 +31,5 @@ body {
   padding-left: 10%;
   padding-top: 5%;
   padding-bottom: 5%;
+  margin-bottom: 10%;
 }
