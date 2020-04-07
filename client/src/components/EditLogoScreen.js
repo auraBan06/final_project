@@ -74,7 +74,9 @@ class EditLogoScreen extends Component {
                                         <div className="panel-body">                                            
                                             <form onSubmit={e => {
                                                 e.preventDefault();
-                                                updateLogo({ variables: { text: text.value, color: color.value, backgroundColor: backgroundColor.value, borderColor: borderColor.value, borderRadius: parseInt(borderRadius.value), borderWidth: parseInt(borderWidth.value), margin: parseInt(margin.value), padding: parseInt(padding.value), fontSize: parseInt(fontSize.value) } });
+                                                updateLogo({ variables: {id:data.logo._id, text: text.value, color: color.value, backgroundColor: backgroundColor.value, borderColor:
+                                                        borderColor.value, borderRadius: parseInt(borderRadius.value), borderWidth: parseInt(borderWidth.value), margin:
+                                                            parseInt(margin.value), padding: parseInt(padding.value), fontSize: parseInt(fontSize.value) } });
 
 
                                                 text.value = "";

@@ -131,10 +131,12 @@ var mutation = new GraphQLObjectType({
             updateLogo: {
                 type: logoType,
                 args: {
-                    id: {
+                     id: {
                         name: 'id',
                         type: new GraphQLNonNull(GraphQLString)
                     },
+
+
                     text: {
                         type: new GraphQLNonNull(GraphQLString)
                     },
@@ -164,7 +166,10 @@ var mutation = new GraphQLObjectType({
                     }
                 },
                 resolve(root, params) {
-                    return LogoModel.findByIdAndUpdate(params.id, { text: params.text, color: params.color, backgroundColor: params.backgroundColor, borderColor: params.borderColor, borderRadius: params.borderRadius, borderWidth: params.borderWidth, margin: params.margin, padding: params.padding, fontSize: params.fontSize, lastUpdate: new Date() }, function (err) {
+                    return LogoModel.findByIdAndUpdate(params.id, { text: params.text, color: params.color, backgroundColor: params.backgroundColor,
+                        borderColor: params.borderColor,
+                        borderRadius: params.borderRadius, borderWidth: params.borderWidth, margin: params.margin, padding:
+                        params.padding, fontSize: params.fontSize, lastUpdate: new Date() }, function (err) {
                         if (err) return next(err);
                     });
                 }

@@ -16,6 +16,8 @@ const GET_LOGOS = gql`
 
 class HomeScreen extends Component {
 
+
+
     render() {
         return (
             <Query pollInterval={500} query={GET_LOGOS}>
@@ -27,7 +29,8 @@ class HomeScreen extends Component {
                         <div className="container row">
                             <div className="col s4">
                                 <h3>Recent Work</h3>
-                                {data.logos.map((logo, index) => (
+
+                                {data.logos.sort((a, b) => b.lastUpdate > a.lastUpdate).map((logo, index) => (
                                     <div key={index} className='home_logo_link'
                                         style={{ cursor: "pointer" }}>
                                         <Link to={`/view/${logo._id}`}>{logo.text}</Link>
