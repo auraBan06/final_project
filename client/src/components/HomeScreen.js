@@ -25,10 +25,14 @@ class HomeScreen extends Component {
                     if (loading) return 'Loading...';
                     if (error) return `Error! ${error.message}`;
 
+console.log(data.logos.sort((a, b) => b.lastUpdate > a.lastUpdate));
+
                     return (
                         <div className="container row">
                             <div className="col s4">
                                 <h3 style={headerStyle} >Recent Work</h3>
+
+
 
                                 {data.logos.sort((a, b) => b.lastUpdate > a.lastUpdate).map((logo, index) => (
 
