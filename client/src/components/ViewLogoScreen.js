@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import '../App.css';
 import gql from 'graphql-tag';
 import { Query, Mutation } from 'react-apollo';
+import TextEditWorkspace from "./TextEditWorkspace";
 
 const GET_LOGO = gql`
     query logo($logoId: String) {
@@ -41,7 +42,9 @@ class ViewLogoScreen extends Component {
                     if (error) return `Error! ${error.message}`;
 
                     return (
-                        <div className="container">
+
+                        <div className="row">
+                        <div className="container col-sm-6">
                             <div className="panel panel-default">
                                 <div className="panel-heading">
                                     <h4><Link to="/">Home</Link></h4>
@@ -86,6 +89,10 @@ class ViewLogoScreen extends Component {
                                     </dl>
                                     <Mutation mutation={DELETE_LOGO} key={data.logo._id} onCompleted={() => this.props.history.push('/')}>
                                         {(removeLogo, { loading, error }) => (
+
+
+
+
                                             <div>
                                                 <form
                                                     onSubmit={e => {
@@ -103,6 +110,14 @@ class ViewLogoScreen extends Component {
                                 </div>
                             </div>
                         </div>
+                            <div className="col-sm-6">
+
+                                <TextEditWorkspace logo={data.logo}/>
+
+                            </div>
+                        </div>
+
+
                     );
                 }}
             </Query>

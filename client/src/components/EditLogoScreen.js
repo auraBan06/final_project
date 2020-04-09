@@ -230,6 +230,9 @@ class EditLogoScreen extends Component {
                                                     }} placeholder="Border Color" />
                                                 </div>
 
+
+
+
                                                 <div className="form-group">
                                                     <label htmlFor="fontSize">Border Radius:</label>
                                                     <input type="range" class="form-control-range" id="formControlRange" min="0" max="100" onChange={this.handleBorderRadiusChange} value={this.state.borderRadius} name="borderRadius" ref={node => {
