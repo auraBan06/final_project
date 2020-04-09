@@ -36,15 +36,15 @@ class CreateLogoScreen extends Component {
         super(props);
 
         this.state = {
-            text: "",
-            textColor : "",
-            fontSize : "",
-            backgroundColor: "",
-            borderRadius: "",
-            borderWidth: "",
-            margin: "",
-            padding: "",
-            borderColor: "",
+            text: "goLogoLo",
+            color : "#A52A2A",
+            fontSize : "30",
+            backgroundColor: "#7FFFD4",
+            borderRadius: "30",
+            borderWidth: "30",
+            margin: "30",
+            padding: "30",
+            borderColor: "#FFE4C4",
 
 
 
@@ -55,13 +55,16 @@ class CreateLogoScreen extends Component {
 
 
     handleText = (event) => {
+
         console.log("handleTextColorChange to " + event.target.value);
         this.setState({ text: event.target.value });
     };
 
     handleTextColorChange = (event) => {
-        console.log("handleTextColorChange to " + event.target.value);
-        this.setState({ textColor: event.target.value });
+
+            console.log("handleTextColorChange to " + event.target.value);
+            this.setState({color: event.target.value});
+
     };
 
 
@@ -70,9 +73,10 @@ class CreateLogoScreen extends Component {
 
 
     handleFontSizeChange = (event) => {
-        console.log("handleTextColorChangeComplete to " + event.target.value);
-        this.setState({ fontSize: event.target.value });
-
+        if (event.target.value >= 4 && event.target.value <= 100) {
+            console.log("handleTextColorChangeComplete to " + event.target.value);
+            this.setState({fontSize: event.target.value});
+        }
     };
 
 
@@ -82,25 +86,33 @@ class CreateLogoScreen extends Component {
 
 
     handleMarginChange = (event) => {
-        this.setState({ margin: event.target.value });
+
+        if (event.target.value >= 0 && event.target.value <= 100){
+            this.setState({ margin: event.target.value });
+        }
+
 
     };
 
     handleBorderWidthChange = (event) => {
-        this.setState({ borderWidth: event.target.value });
+        if (event.target.value >= 0 && event.target.value <= 100) {
+            this.setState({borderWidth: event.target.value});
+        }
 
     };
 
 
     handlePaddingChange = (event) => {
-        this.setState({ padding: event.target.value });
-
+        if (event.target.value >= 0 && event.target.value <= 100) {
+            this.setState({padding: event.target.value});
+        }
     };
 
 
     handleBorderRadiusChange = (event) => {
-        this.setState({ borderRadius: event.target.value });
-
+        if (event.target.value >= 0 && event.target.value <= 100) {
+            this.setState({borderRadius: event.target.value});
+        }
     };
 
     handleBackgroundColorChange = (event) => {
@@ -166,13 +178,13 @@ class CreateLogoScreen extends Component {
 
                                     <div className="form-group">
                                         <label htmlFor="text">Text:</label>
-                                        <input type="text" onChange={this.handleText} className="form-control" name="text" ref={node => {
+                                        <input type="text" minlength= "1" onChange={this.handleText} required={true} value={this.state.text} className="form-control" name="text" ref={node => {
                                             text = node;
                                         }} placeholder="Text" />
                                     </div>
                                     <div className="form-group">
                                         <label htmlFor="color">Color:</label>
-                                        <input type="color" onChange={this.handleTextColorChange} className="form-control" name="color" ref={node => {
+                                        <input type="color" onChange={this.handleTextColorChange} value={this.state.color} className="form-control" name="color" ref={node => {
                                             color = node;
                                         }} placeholder="Color" />
                                     </div>
@@ -181,21 +193,21 @@ class CreateLogoScreen extends Component {
 
                                     <div className="form-group">
                                         <label htmlFor="color">Background Color:</label>
-                                        <input type="color"  onChange={this.handleBackgroundColorChange} className="form-control" name="backgroundColor" ref={node => {
+                                        <input type="color"  onChange={this.handleBackgroundColorChange} value={this.state.backgroundColor} className="form-control" name="backgroundColor" ref={node => {
                                             backgroundColor = node;
                                         }} placeholder="Background Color" />
                                     </div>
 
                                     <div className="form-group">
                                         <label htmlFor="color">Border Color:</label>
-                                        <input type="color" onChange={this.handleBorderColorChange} className="form-control" name="borderColor" ref={node => {
+                                        <input type="color" onChange={this.handleBorderColorChange} value={this.state.borderColor} className="form-control" name="borderColor" ref={node => {
                                             borderColor = node;
                                         }} placeholder="Border Color" />
                                     </div>
 
                                     <div className="form-group">
                                         <label htmlFor="fontSize">Border Radius:</label>
-                                        <input type="number" onChange={this.handleBorderRadiusChange} className="form-control" name="borderRadius" ref={node => {
+                                        <input type="number" min="0" max="100" onChange={this.handleBorderRadiusChange} value={this.state.borderRadius} className="form-control" name="borderRadius" ref={node => {
                                             borderRadius = node;
                                         }} placeholder="border radius" />
                                     </div>
@@ -203,21 +215,21 @@ class CreateLogoScreen extends Component {
 
                                     <div className="form-group">
                                         <label htmlFor="fontSize">Border Width:</label>
-                                        <input type="number" onChange={this.handleBorderWidthChange} className="form-control" name="borderWidth" ref={node => {
+                                        <input type="number" min="0" max="100" onChange={this.handleBorderWidthChange} value={this.state.borderWidth} className="form-control" name="borderWidth" ref={node => {
                                             borderWidth = node;
                                         }} placeholder="Border Width" />
                                     </div>
 
                                     <div className="form-group">
                                         <label htmlFor="fontSize">Margin:</label>
-                                        <input type="number" onChange={this.handleMarginChange} className="form-control" name="margin" ref={node => {
+                                        <input type="number" className="form-control" min="0" max="100" onChange={this.handleMarginChange} value={this.state.margin} name="margin" ref={node => {
                                             margin = node;
                                         }} placeholder="Margin" />
                                     </div>
 
                                     <div className="form-group">
                                         <label htmlFor="padding">Padding:</label>
-                                        <input type="number" min="0" max="100" onChange={this.handlePaddingChange} className="form-control" name="fontSize" ref={node => {
+                                        <input type="number" min="0" max="100" onChange={this.handlePaddingChange} value={this.state.padding} className="form-control" name="fontSize" ref={node => {
                                             padding = node;
                                         }} placeholder="Padding" />
 
@@ -229,7 +241,7 @@ class CreateLogoScreen extends Component {
 
                                     <div className="form-group">
                                         <label htmlFor="fontSize">Font Size:</label>
-                                        <input type="number" min="0" max="100" className="form-control" name="fontSize"  onChange={this.handleFontSizeChange} ref={node => {
+                                        <input type="number" min="0" max="100" className="form-control" name="fontSize" onChange={this.handleFontSizeChange} value={this.state.fontSize} ref={node => {
                                             fontSize = node;
                                         }} placeholder="Font Size" />
                                     </div>

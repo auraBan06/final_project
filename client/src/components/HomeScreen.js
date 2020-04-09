@@ -30,7 +30,7 @@ console.log(data.logos.sort((a, b) => b.lastUpdate > a.lastUpdate));
                     return (
                         <div className="container row">
                             <div className="col s4">
-                                <h3 style={headerStyle} >Recent Work</h3>
+                                <h3  style={headerStyle} >Recent Work</h3>
 
 
 
@@ -86,7 +86,7 @@ const newLogoStyle={
     fontSize: "20px",
     borderRadius: "30px",
     borderStyle: "solid",
-    borderColor: "white",
+    borderColor: "black",
     borderWidth: "10px",
     fontWeight: "bold",
 
@@ -95,7 +95,7 @@ const newLogoStyle={
 
 
 const headerStyle={
-    color:"white",
+    color:"black",
 
 };
 
