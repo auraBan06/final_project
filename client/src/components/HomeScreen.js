@@ -87,7 +87,7 @@ const newLogoStyle={
     borderRadius: "30px",
     borderStyle: "solid",
     borderColor: "black",
-    borderWidth: "10px",
+    borderWidth: "5px",
     fontWeight: "bold",
 
 

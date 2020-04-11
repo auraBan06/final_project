@@ -73,7 +73,7 @@ class CreateLogoScreen extends Component {
 
 
     handleFontSizeChange = (event) => {
-        if (event.target.value >= 4 && event.target.value <= 100) {
+        if (event.target.value >= 0 && event.target.value <= 100) {
             console.log("handleTextColorChangeComplete to " + event.target.value);
             this.setState({fontSize: event.target.value});
         }
@@ -207,7 +207,7 @@ class CreateLogoScreen extends Component {
 
                                     <div className="form-group">
                                         <label htmlFor="fontSize">Border Radius:</label>
-                                        <input type="number" min="0" max="100" onChange={this.handleBorderRadiusChange} value={this.state.borderRadius} className="form-control" name="borderRadius" ref={node => {
+                                        <input type="number" min="0" max="100" required={true} onChange={this.handleBorderRadiusChange} value={this.state.borderRadius} className="form-control" name="borderRadius" ref={node => {
                                             borderRadius = node;
                                         }} placeholder="border radius" />
                                     </div>
@@ -215,21 +215,21 @@ class CreateLogoScreen extends Component {
 
                                     <div className="form-group">
                                         <label htmlFor="fontSize">Border Width:</label>
-                                        <input type="number" min="0" max="100" onChange={this.handleBorderWidthChange} value={this.state.borderWidth} className="form-control" name="borderWidth" ref={node => {
+                                        <input type="number" min="0" max="100" required={true} onChange={this.handleBorderWidthChange} value={this.state.borderWidth} className="form-control" name="borderWidth" ref={node => {
                                             borderWidth = node;
                                         }} placeholder="Border Width" />
                                     </div>
 
                                     <div className="form-group">
                                         <label htmlFor="fontSize">Margin:</label>
-                                        <input type="number" className="form-control" min="0" max="100" onChange={this.handleMarginChange} value={this.state.margin} name="margin" ref={node => {
+                                        <input type="number" className="form-control" min="0" max="100" required={true} onChange={this.handleMarginChange} value={this.state.margin} name="margin" ref={node => {
                                             margin = node;
                                         }} placeholder="Margin" />
                                     </div>
 
                                     <div className="form-group">
                                         <label htmlFor="padding">Padding:</label>
-                                        <input type="number" min="0" max="100" onChange={this.handlePaddingChange} value={this.state.padding} className="form-control" name="fontSize" ref={node => {
+                                        <input type="number" min="0" max="100" required={true} onChange={this.handlePaddingChange} value={this.state.padding} className="form-control" name="fontSize" ref={node => {
                                             padding = node;
                                         }} placeholder="Padding" />
 
@@ -241,7 +241,7 @@ class CreateLogoScreen extends Component {
 
                                     <div className="form-group">
                                         <label htmlFor="fontSize">Font Size:</label>
-                                        <input type="number" min="0" max="100" className="form-control" name="fontSize" onChange={this.handleFontSizeChange} value={this.state.fontSize} ref={node => {
+                                        <input type="number" min="4" max="100" required={true} className="form-control" name="fontSize" onChange={this.handleFontSizeChange} value={this.state.fontSize} ref={node => {
                                             fontSize = node;
                                         }} placeholder="Font Size" />
                                     </div>
