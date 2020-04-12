@@ -298,7 +298,10 @@ class EditLogoScreen extends Component {
 
                                     <div class="col-sm-6">
 
-                                        <TextEditWorkspace logo={this.state} />
+                                        <div style={{overflow: "scroll"}}>
+                                            <TextEditWorkspace  logo={this.state}/>
+
+                                        </div>
 
                                     </div>
 

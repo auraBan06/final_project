@@ -15,6 +15,7 @@ class TextEditWorkspace extends Component {
                 borderColor: this.props.logo.borderColor,
                 width: "max-content",
                 borderStyle: "solid",
+                minWidth: "max-content",
 
 
 

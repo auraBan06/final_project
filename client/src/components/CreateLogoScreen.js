@@ -252,9 +252,17 @@ class CreateLogoScreen extends Component {
                             </div>
                         </div>
                     </div>
-                        <div className="col-sm-6">
+                        <div className="col-sm-6" >
 
-                            <TextEditWorkspace logo={this.state}/>
+                            <div style={{overflow: "scroll"}}>
+                                <TextEditWorkspace  logo={this.state}/>
+
+                            </div>
+
+
+
+
+
 
                         </div>
                     </div>
