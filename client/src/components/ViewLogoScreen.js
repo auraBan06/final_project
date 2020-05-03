@@ -3,13 +3,15 @@ import { Link } from 'react-router-dom';
 import '../App.css';
 import gql from 'graphql-tag';
 import { Query, Mutation } from 'react-apollo';
-import TextEditWorkspace from "./TextEditWorkspace";
+
 
 const GET_LOGO = gql`
     query logo($logoId: String) {
         logo(id: $logoId) {
              _id
             text
+            width
+            height
             color
             backgroundColor
             borderColor
@@ -19,6 +21,7 @@ const GET_LOGO = gql`
             padding
             fontSize
             lastUpdate
+            
         }
     }
 `;
@@ -55,6 +58,11 @@ class ViewLogoScreen extends Component {
                                 </div>
                                 <div className="panel-body">
                                     <dl>
+                                        <dt>Width:</dt>
+                                        <dd>{data.logo.width}</dd>
+                                        <dt>Height:</dt>
+                                        <dd>{data.logo.height}</dd>
+
                                         <dt>Text:</dt>
                                         <dd>{data.logo.text}</dd>
                                         <dt>Color:</dt>
@@ -112,7 +120,20 @@ class ViewLogoScreen extends Component {
                         </div>
                             <div className="col-sm-6">
 
-                                <TextEditWorkspace logo={data.logo}/>
+                                                <span style={{
+                                                    display: "inline-block",
+                                                    color: data.logo.color,
+                                                    backgroundColor: data.logo.backgroundColor,
+                                                    borderColor: data.logo.borderColor,
+                                                    borderStyle: "solid",
+                                                    fontSize: data.logo.fontSize + "px",
+                                                    borderWidth: data.logo.borderWidth + "px",
+                                                    borderRadius: data.logo.borderRadius + "px",
+                                                    padding: data.logo.padding + "px",
+                                                    margin: data.logo.margin + "px",
+                                                    width: data.logo.width + "px",
+                                                    height: data.logo.height + "px",
+                                                }}>{data.logo.text}</span>
 
                             </div>
                         </div>

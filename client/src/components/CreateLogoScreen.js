@@ -2,11 +2,14 @@ import React, { Component } from 'react';
 import gql from "graphql-tag";
 import { Mutation } from "react-apollo";
 import { Link } from 'react-router-dom';
-import TextEditWorkspace from "./TextEditWorkspace";
+import {clamp} from "../utils/utlity";
+
 
 const ADD_LOGO = gql`
     mutation AddLogo(
         $text: String!,
+        $width: Int!,
+        $height: Int!,
         $color: String!,
         $backgroundColor: String!,
         $borderColor: String!,
@@ -14,9 +17,12 @@ const ADD_LOGO = gql`
         $borderWidth: Int!,
         $margin: Int!,
         $padding: Int!,
+       
         $fontSize: Int!) {
         addLogo(
             text: $text,
+            width: $width,
+            height: $height,
             color: $color,
             backgroundColor: $backgroundColor,
             borderColor: $borderColor,
@@ -36,15 +42,17 @@ class CreateLogoScreen extends Component {
         super(props);
 
         this.state = {
-            text: "goLogoLo",
-            color : "#A52A2A",
-            fontSize : "30",
-            backgroundColor: "#7FFFD4",
-            borderRadius: "30",
-            borderWidth: "30",
-            margin: "30",
-            padding: "30",
-            borderColor: "#FFE4C4",
+            text: "",
+            width: "",
+            height: "",
+            color : "",
+            fontSize : "",
+            backgroundColor: "",
+            borderRadius: "",
+            borderWidth: "",
+            margin: "",
+            padding: "",
+            borderColor: "",
 
 
 
@@ -54,90 +62,10 @@ class CreateLogoScreen extends Component {
     }
 
 
-    handleText = (event) => {
-
-        console.log("handleTextColorChange to " + event.target.value);
-        this.setState({ text: event.target.value });
-    };
-
-    handleTextColorChange = (event) => {
-
-            console.log("handleTextColorChange to " + event.target.value);
-            this.setState({color: event.target.value});
-
-    };
-
-
-
-
-
-
-    handleFontSizeChange = (event) => {
-        if (event.target.value >= 0 && event.target.value <= 100) {
-            console.log("handleTextColorChangeComplete to " + event.target.value);
-            this.setState({fontSize: event.target.value});
-        }
-    };
-
-
-
-
-
-
-
-    handleMarginChange = (event) => {
-
-        if (event.target.value >= 0 && event.target.value <= 100){
-            this.setState({ margin: event.target.value });
-        }
-
-
-    };
-
-    handleBorderWidthChange = (event) => {
-        if (event.target.value >= 0 && event.target.value <= 100) {
-            this.setState({borderWidth: event.target.value});
-        }
-
-    };
-
-
-    handlePaddingChange = (event) => {
-        if (event.target.value >= 0 && event.target.value <= 100) {
-            this.setState({padding: event.target.value});
-        }
-    };
-
-
-    handleBorderRadiusChange = (event) => {
-        if (event.target.value >= 0 && event.target.value <= 100) {
-            this.setState({borderRadius: event.target.value});
-        }
-    };
-
-    handleBackgroundColorChange = (event) => {
-
-        this.setState({ backgroundColor: event.target.value });
-    };
-
-    handleBorderColorChange = (event) => {
-
-        this.setState({ borderColor: event.target.value });
-    };
-
-
-
-
-
-
-
-
-
-
 
 
     render() {
-        let text, color, fontSize, backgroundColor, borderColor, borderRadius, borderWidth, margin, padding;
+        let text, color, fontSize, backgroundColor, borderColor, borderRadius, borderWidth, margin, padding, width, height;
 
 
 
@@ -161,8 +89,10 @@ class CreateLogoScreen extends Component {
                             <div className="panel-body">
                                 <form onSubmit={e => {
                                     e.preventDefault();
-                                    addLogo({ variables: { text: text.value, color: color.value, backgroundColor: backgroundColor.value, borderColor: borderColor.value, borderRadius: parseInt(borderRadius.value), borderWidth: parseInt(borderWidth.value), margin: parseInt(margin.value), padding: parseInt(padding.value), fontSize: parseInt(fontSize.value) } });
+                                    addLogo({ variables: { text: text.value, width: parseInt(width.value), height: parseInt(height.value), color: color.value, backgroundColor: backgroundColor.value, borderColor: borderColor.value, borderRadius: parseInt(borderRadius.value), borderWidth: parseInt(borderWidth.value), margin: parseInt(margin.value), padding: parseInt(padding.value), fontSize: parseInt(fontSize.value) } });
                                     text.value = "";
+                                    width.value = "";
+                                    height.value = "";
                                     color.value = "";
                                     backgroundColor.value = "";
                                     borderColor.value = "";
@@ -173,77 +103,71 @@ class CreateLogoScreen extends Component {
                                     fontSize.value = "";
 
                                 }}>
-
-
-
-                                    <div className="form-group">
+                                    <div className="form-group col-8">
+                                        <label htmlFor="padding">Width:</label>
+                                        <input type="number" onInput={()=>{width.value = clamp(width.value, 10, 2000);}} className="form-control" name="padding" ref={node => {
+                                            width = node;
+                                        }} onChange={() => this.setState({width: parseInt(width.value)})} placeholder="Width" />
+                                    </div>
+                                    <div className="form-group col-8">
+                                        <label htmlFor="margin">Height:</label>
+                                        <input type="number" onInput={()=>{height.value = clamp(height.value, 10, 2000);}} className="form-control" name="height" ref={node => {
+                                            height = node;
+                                        }} onChange={() => this.setState({height: parseInt(height.value)})} placeholder="Height" />
+                                    </div>
+                                    <div className="form-group col-8">
                                         <label htmlFor="text">Text:</label>
-                                        <input type="text" minlength= "1" onChange={this.handleText} required={true} value={this.state.text} className="form-control" name="text" ref={node => {
+                                        <input type="text" required={"yes"} className="form-control" name="text" ref={node => {
                                             text = node;
-                                        }} placeholder="Text" />
+                                        }} onChange={() => this.setState({text: text.value})} placeholder="Text" />
                                     </div>
-                                    <div className="form-group">
+                                    <div className="form-group col-4">
                                         <label htmlFor="color">Color:</label>
-                                        <input type="color" onChange={this.handleTextColorChange} value={this.state.color} className="form-control" name="color" ref={node => {
+                                        <input type="color" className="form-control" name="color" ref={node => {
                                             color = node;
-                                        }} placeholder="Color" />
+                                        }}onChange={() => this.setState({color: color.value})} placeholder="Color" />
                                     </div>
-
-
-
-                                    <div className="form-group">
-                                        <label htmlFor="color">Background Color:</label>
-                                        <input type="color"  onChange={this.handleBackgroundColorChange} value={this.state.backgroundColor} className="form-control" name="backgroundColor" ref={node => {
+                                    <div className="form-group col-4">
+                                        <label htmlFor="backgroundColor">Background Color:</label>
+                                        <input type="color" className="form-control" name="backgroundColor" ref={node => {
                                             backgroundColor = node;
-                                        }} placeholder="Background Color" />
+                                        }} onChange={() => this.setState({backgroundColor: backgroundColor.value})} placeholder="Background Color" />
                                     </div>
-
-                                    <div className="form-group">
-                                        <label htmlFor="color">Border Color:</label>
-                                        <input type="color" onChange={this.handleBorderColorChange} value={this.state.borderColor} className="form-control" name="borderColor" ref={node => {
+                                    <div className="form-group col-4">
+                                        <label htmlFor="borderColor">Border Color:</label>
+                                        <input type="color" className="form-control" name="borderColor" ref={node => {
                                             borderColor = node;
-                                        }} placeholder="Border Color" />
+                                        }} onChange={() => this.setState({borderColor: borderColor.value})} placeholder="Border Color" />
                                     </div>
-
-                                    <div className="form-group">
-                                        <label htmlFor="fontSize">Border Radius:</label>
-                                        <input type="number" min="0" max="100" required={true} onChange={this.handleBorderRadiusChange} value={this.state.borderRadius} className="form-control" name="borderRadius" ref={node => {
-                                            borderRadius = node;
-                                        }} placeholder="border radius" />
-                                    </div>
-
-
-                                    <div className="form-group">
-                                        <label htmlFor="fontSize">Border Width:</label>
-                                        <input type="number" min="0" max="100" required={true} onChange={this.handleBorderWidthChange} value={this.state.borderWidth} className="form-control" name="borderWidth" ref={node => {
-                                            borderWidth = node;
-                                        }} placeholder="Border Width" />
-                                    </div>
-
-                                    <div className="form-group">
-                                        <label htmlFor="fontSize">Margin:</label>
-                                        <input type="number" className="form-control" min="0" max="100" required={true} onChange={this.handleMarginChange} value={this.state.margin} name="margin" ref={node => {
-                                            margin = node;
-                                        }} placeholder="Margin" />
-                                    </div>
-
-                                    <div className="form-group">
-                                        <label htmlFor="padding">Padding:</label>
-                                        <input type="number" min="0" max="100" required={true} onChange={this.handlePaddingChange} value={this.state.padding} className="form-control" name="fontSize" ref={node => {
-                                            padding = node;
-                                        }} placeholder="Padding" />
-
-                                    </div>
-
-
-
-
-
-                                    <div className="form-group">
+                                    <div className="form-group col-8">
                                         <label htmlFor="fontSize">Font Size:</label>
-                                        <input type="number" min="4" max="100" required={true} className="form-control" name="fontSize" onChange={this.handleFontSizeChange} value={this.state.fontSize} ref={node => {
+                                        <input type="number" onInput={()=>{fontSize.value = clamp(fontSize.value, 4, 100);}} className="form-control" name="fontSize" ref={node => {
                                             fontSize = node;
-                                        }} placeholder="Font Size" />
+                                        }} onChange={() => this.setState({fontSize: parseInt(fontSize.value)})} placeholder="Font Size" />
+                                    </div>
+                                    <div className="form-group col-8">
+                                        <label htmlFor="borderWidth">Border Width:</label>
+                                        <input type="number" onInput={()=>{borderWidth.value = clamp(borderWidth.value, 0, 100);}} className="form-control" name="borderWidth" ref={node => {
+                                            borderWidth = node;
+                                        }} onChange={() => this.setState({borderWidth: parseInt(borderWidth.value)})} placeholder="Border Width" />
+                                    </div>
+                                    <div className="form-group col-8">
+                                        <label htmlFor="borderRadius">Border Radius:</label>
+                                        <input type="number" onInput={()=>{borderRadius.value = clamp(borderRadius.value, 0, 100);}} className="form-control" name="borderRadius" ref={node => {
+                                            borderRadius = node;
+                                        }} onChange={() => this.setState({borderRadius: parseInt(borderRadius.value)})} placeholder="Border Radius" />
+                                    </div>
+                                    <div className="form-group col-8">
+                                        <label htmlFor="padding">Padding:</label>
+                                        <input type="number" onInput={()=>{padding.value = clamp(padding.value, 0, 100);}} className="form-control" name="padding" ref={node => {
+                                            padding = node;
+                                        }} onChange={() => this.setState({padding: parseInt(padding.value)})} placeholder="Padding" />
+                                    </div>
+                                    <div className="form-group col-8">
+                                        <label htmlFor="margin">Margin:</label>
+                                        <input type="number" onInput={()=>{margin.value = clamp(margin.value, 0, 100);}} className="form-control" name="margin" ref={node => {
+                                            margin = node;
+                                        }} onChange={() => this.setState({margin: parseInt(margin.value)})} placeholder="Margin" />
                                     </div>
                                     <button type="submit" className="btn btn-success">Submit</button>
                                 </form>
@@ -254,8 +178,21 @@ class CreateLogoScreen extends Component {
                     </div>
                         <div className="col-sm-6" >
 
-                            <div style={{overflow: "scroll"}}>
-                                <TextEditWorkspace  logo={this.state}/>
+                             <div id={"canvas"} style={{
+                                 display: "inline-block",
+                                 color: this.state.color ? this.state.color : "#000000",
+                                 backgroundColor: this.state.backgroundColor ? this.state.backgroundColor : "#FFFFFF",
+                                 borderColor: this.state.borderColor ? this.state.borderColor : "#000000",
+                                 borderStyle: "solid",
+                                 fontSize: (this.state.fontSize ? this.state.fontSize : 12) + "px",
+                                 borderWidth: (this.state.borderWidth ? this.state.borderWidth : 5) + "px",
+                                 borderRadius: (this.state.borderRadius ? this.state.borderRadius : 5) + "px",
+                                 padding: (this.state.padding ? this.state.padding : 0) + "px",
+                                 margin: (this.state.margin ? this.state.margin : 0) + "px",
+                                 width: (this.state.width ? this.state.width : 200) + "px",
+                                 height: (this.state.height ? this.state.height : 200) + "px"
+                             }}>{this.state.text ? this.state.text : "New Logo"}</div>
+
 
                             </div>
 
@@ -265,7 +202,7 @@ class CreateLogoScreen extends Component {
 
 
                         </div>
-                    </div>
+
                 )}
             </Mutation>
         );
