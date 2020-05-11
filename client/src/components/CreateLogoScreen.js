@@ -3,11 +3,12 @@ import gql from "graphql-tag";
 import { Mutation } from "react-apollo";
 import { Link } from 'react-router-dom';
 import {clamp} from "../utils/utlity";
+import {Rnd} from "react-rnd";
 
 
 const ADD_LOGO = gql`
     mutation AddLogo(
-        $text: String!,
+        $text: [String]!,
         $width: Int!,
         $height: Int!,
         $color: String!,
@@ -42,7 +43,7 @@ class CreateLogoScreen extends Component {
         super(props);
 
         this.state = {
-            text: "",
+            text: [],
             width: "",
             height: "",
             color : "",
@@ -54,7 +55,7 @@ class CreateLogoScreen extends Component {
             padding: "",
             borderColor: "",
 
-
+            possibletext: ""
 
 
         };
@@ -65,6 +66,19 @@ class CreateLogoScreen extends Component {
 
 
     render() {
+
+
+        const styles = {
+
+
+            rndStyle:{
+                width: "max-content",
+                border: this.state.border,
+            },
+
+        };
+
+
         let text, color, fontSize, backgroundColor, borderColor, borderRadius, borderWidth, margin, padding, width, height;
 
 
@@ -90,7 +104,7 @@ class CreateLogoScreen extends Component {
                                 <form onSubmit={e => {
                                     e.preventDefault();
                                     addLogo({ variables: { text: text.value, width: parseInt(width.value), height: parseInt(height.value), color: color.value, backgroundColor: backgroundColor.value, borderColor: borderColor.value, borderRadius: parseInt(borderRadius.value), borderWidth: parseInt(borderWidth.value), margin: parseInt(margin.value), padding: parseInt(padding.value), fontSize: parseInt(fontSize.value) } });
-                                    text.value = "";
+                                    text.value = [];
                                     width.value = "";
                                     height.value = "";
                                     color.value = "";
@@ -117,9 +131,16 @@ class CreateLogoScreen extends Component {
                                     </div>
                                     <div className="form-group col-8">
                                         <label htmlFor="text">Text:</label>
-                                        <input type="text" required={"yes"} className="form-control" name="text" ref={node => {
+                                        <input type="text" className="form-control" name="text" ref={node => {
                                             text = node;
-                                        }} onChange={() => this.setState({text: text.value})} placeholder="Text" />
+                                        }} onChange={() => this.setState({possibletext: text.value})}/>
+
+                                        <button type={"button"} className="btn btn-dark"
+                                                onClick={() => {
+                                                    this.state.text.push(this.state.possibletext)
+                                                }}>
+                                            Add Text
+                                        </button>
                                     </div>
                                     <div className="form-group col-4">
                                         <label htmlFor="color">Color:</label>
@@ -191,7 +212,47 @@ class CreateLogoScreen extends Component {
                                  margin: (this.state.margin ? this.state.margin : 0) + "px",
                                  width: (this.state.width ? this.state.width : 200) + "px",
                                  height: (this.state.height ? this.state.height : 200) + "px"
-                             }}>{this.state.text ? this.state.text : "New Logo"}</div>
+                             }}>
+
+
+                                 {this.state.text.map(text =>
+
+
+                                     <Rnd
+
+                                         bounds="#canvas"
+                                         scale={1}
+                                         enableResizing={"disable"}
+
+                                         style={styles.rndStyle}
+                                         onDrag={() => { this.setState({ border: "2px dotted red"}) }}
+
+                                         onDragStop={() => { this.setState({ border: ""}) }}
+                                     >
+                                         <div>
+
+                                             {text}
+
+                                         </div>
+
+
+
+                                     </Rnd>
+
+
+
+
+
+                                 )}
+
+
+
+
+
+
+
+
+                             </div>
 
 
                             </div>

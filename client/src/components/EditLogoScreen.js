@@ -2,9 +2,14 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import gql from "graphql-tag";
 import { Query, Mutation } from "react-apollo";
-
+import htmlToImage from 'html-to-image';
+import download from 'downloadjs';
 import {Rnd} from "react-rnd";
 import {clamp} from "../utils/utlity";
+
+import ResizeImage from 'react-resize-image'
+import { Resizable, ResizableBox } from 'react-resizable';
+
 
 
 const GET_LOGO = gql`
@@ -22,6 +27,7 @@ const GET_LOGO = gql`
             margin
             padding
             fontSize
+            images
             
         }
     }
@@ -30,7 +36,8 @@ const GET_LOGO = gql`
 const UPDATE_LOGO = gql`
     mutation updateLogo(
         $id: String!,
-        $text: String!,
+        $text: [String]!,
+        
         $width: Int!,
         $height: Int!,
         $color: String!,
@@ -41,7 +48,9 @@ const UPDATE_LOGO = gql`
         $margin: Int!,
         $padding: Int!,
         
-        $fontSize: Int!) {
+        $fontSize: Int!
+        $images: [String]!
+        ) {
             updateLogo(
                 id: $id,
                 text: $text,
@@ -56,7 +65,13 @@ const UPDATE_LOGO = gql`
                 margin: $margin,
                 padding: $padding,
                 
-                fontSize: $fontSize) {
+                fontSize: $fontSize
+                images: $images
+                
+                
+                )
+                 
+                 {
                     lastUpdate
                 }
         }
@@ -68,9 +83,12 @@ class EditLogoScreen extends Component {
     constructor(props) {
         super(props);
 
+
+
+
         this.state = {
 
-            text: "",
+            text: [],
             width: "",
             height: "",
             color : "",
@@ -81,6 +99,14 @@ class EditLogoScreen extends Component {
             margin: "",
             padding: "",
             borderColor: "",
+            images: [],
+            possibleUrl: "",
+            possibletext: "",
+
+            flag: false,
+            focus: null,
+            focusImage: null
+
 
 
         };
@@ -89,6 +115,30 @@ class EditLogoScreen extends Component {
 
 
 
+removeText = (index) => {
+
+        this.setState({focus: index});
+        console.log(index)
+
+};
+
+    removeImage = (index) => {
+
+        this.setState({focusImage: index});
+        console.log(index)
+
+    };
+
+
+
+
+
+    dataParameters = (text, color, fontSize, backgroundColor, borderRadius, borderWidth, margin, padding, borderColor,width ,height ,images ,flag) => {
+        this.setState({text: text, color: color, fontSize:fontSize,
+            backgroundColor:backgroundColor, borderRadius:borderRadius,
+            borderWidth:borderWidth, margin:margin, padding:padding, borderColor:borderColor,width: width ,height: height ,images: images ,flag:flag});
+
+    };
 
     render() {
 
@@ -102,20 +152,39 @@ class EditLogoScreen extends Component {
 
         };
 
+        const style = {
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            border: "solid 1px #ddd",
+            background: "#f0f0f0"
+        };
 
 
 
-        let text, color, fontSize, backgroundColor, borderColor, borderRadius, borderWidth, margin, padding, width, height;
+
+
+        let text, text2 ,color, fontSize, backgroundColor, borderColor, borderRadius, borderWidth, margin, padding, width, height, images, image2;
+
         return (
             <Query query={GET_LOGO} variables={{ logoId: this.props.match.params.id }}>
                 {({ loading, error, data }) => {
                     if (loading) return 'Loading...';
                     if (error) return `Error! ${error.message}`;
 
-
+                    if(this.state.flag === false){
+                        this.dataParameters(data.logo.text, data.logo.color, data.logo.fontSize,data.logo.backgroundColor, data.logo.borderRadius,
+                            data.logo.borderWidth, data.logo.margin, data.logo.padding, data.logo.borderColor,data.logo.width ,data.logo.height ,data.logo.images ,true
+                        );
+                    }
 
 
                     return (
+
+
+
+
+
                         <Mutation  mutation={UPDATE_LOGO} key={data.logo._id} onCompleted={() => this.props.history.push(`/`)}>
                             {(updateLogo, { loading, error }) => (
 
@@ -138,12 +207,13 @@ class EditLogoScreen extends Component {
                                         <div className="panel-body">
                                                     <form onSubmit={e => {
                                                     e.preventDefault();
-                                                updateLogo({ variables: {id:data.logo._id, text: text.value, width: parseInt(width.value), height: parseInt(height.value) ,color: color.value, backgroundColor: backgroundColor.value, borderColor:
+                                                updateLogo({ variables: {id:data.logo._id, text: this.state.text, width: parseInt(width.value), height: parseInt(height.value) ,color: color.value, backgroundColor: backgroundColor.value, borderColor:
                                                         borderColor.value, borderRadius: parseInt(borderRadius.value), borderWidth: parseInt(borderWidth.value), margin:
-                                                            parseInt(margin.value), padding: parseInt(padding.value), fontSize: parseInt(fontSize.value) } });
+                                                            parseInt(margin.value), padding: parseInt(padding.value), fontSize: parseInt(fontSize.value), images: this.state.images } });
 
-
-                                                text.value = "";
+                                                text = [];
+                                                images = [];
+                                                text2 = "";
                                                 width.value = "";
                                                 height.value = "";
                                                 color.value = "";
@@ -154,9 +224,20 @@ class EditLogoScreen extends Component {
                                                 margin.value = "";
                                                 padding.value = "";
                                                 fontSize.value = "";
+
+
                                             }}>
 
+                                                        <div>
 
+                                                            <button type={"button"} class="btn btn-dark" onClick={() => htmlToImage.toPng(document.getElementById('canvas'))
+                                                                .then(function (dataUrl) {
+                                                                    download(dataUrl, 'my-node.png');
+                                                                })}>
+                                                                Export Logo
+                                                            </button>
+
+                                                        </div>
 
                                                         <div className="form-group col-8">
                                                             <label htmlFor="padding">Width:</label>
@@ -174,11 +255,94 @@ class EditLogoScreen extends Component {
 
 
                                                         <div className="form-group col-8">
-                                                            <label htmlFor="text">Text:</label>
-                                                            <input type="text" required={"yes"} className="form-control" name="text" ref={node => {
-                                                                text = node;
-                                                            }} onChange={() => this.setState({text: text.value})} placeholder={data.logo.text} defaultValue={data.logo.text} />
+                                                        <label htmlFor="text">Text:</label>
+                                                        <input type="text" value={this.state.possibletext} className="form-control" name="text" ref={node => {
+                                                            text2 = node;
+                                                        }} onChange={() => this.setState({possibletext: text2.value})}/>
+
+                                                        <button type={"button"} className="btn btn-dark"
+                                                                onClick={() => {
+
+                                                                    let tempText = this.state.text;
+                                                                    tempText.push(this.state.possibletext);
+                                                                    this.setState({text: tempText});
+                                                                    this.setState({possibletext: ""});
+
+                                                                }}>
+                                                            Add Text
+                                                        </button>
+
+
+
+
+                                                        <button type={"button"} className="btn btn-dark"
+                                                                onClick={() => {
+                                                                    let tempText = this.state.text;
+
+                                                                   if(this.state.focus != null){
+                                                                       { tempText.splice(this.state.focus, 1); }
+
+                                                                   }
+
+                                                                    this.setState({text: tempText});
+                                                                    this.setState({possibletext: ""});
+
+                                                                }}>
+                                                            Remove Selected Text
+                                                        </button>
+
+
+
+
+                                                    </div>
+
+
+                                                        <div className="form-group col-8">
+                                                            <label htmlFor="text">Image source:</label>
+                                                            <input type="text" value={this.state.possibleUrl} className="form-control" name="text" ref={node => {
+                                                                image2 = node;
+                                                            }} onChange={() => this.setState({possibleUrl: image2.value})}/>
+
+                                                            <button type={"button"} className="btn btn-dark"
+                                                                    onClick={() => {
+
+
+                                                                        let tempImages = this.state.images;
+                                                                        tempImages.push(this.state.possibleUrl);
+                                                                        this.setState({images: tempImages});
+                                                                        this.setState({possibletext: ""});
+
+
+
+
+
+                                                                    }}>
+                                                                Add Image
+                                                            </button>
+
+
+
+
+                                                            <button type={"button"} className="btn btn-dark"
+                                                                    onClick={() => {
+                                                                        let tempImages = this.state.images;
+                                                                        if(this.state.focusImage != null){
+                                                                            { tempImages.splice(this.state.focusImage, 1); }
+
+                                                                        }
+                                                                        this.setState({images: tempImages});
+
+                                                                    }}>
+                                                                Remove Selected Image
+                                                            </button>
+
+
+
+
                                                         </div>
+
+
+
                                                         <div className="form-group col-4">
                                                             <label htmlFor="color">Color:</label>
                                                             <input type="color" className="form-control" name="color" ref={node => {
@@ -223,7 +387,7 @@ class EditLogoScreen extends Component {
                                                         </div>
                                                         <div className="form-group col-8">
                                                             <label htmlFor="margin">Margin:</label>
-                                                            <input type="number" onInput={()=>{margin.value = clamp(margin.value, 0, 100);}} className="form-control" name="margin" ref={node => {
+                                                            <input type="number"  onInput={()=>{margin.value = clamp(margin.value, 0, 100);}} className="form-control" name="margin" ref={node => {
                                                                 margin = node;
                                                             }} onChange={() => this.setState({margin: parseInt(margin.value)})} placeholder={data.logo.margin} defaultValue={data.logo.margin} />
                                                         </div>
@@ -235,9 +399,9 @@ class EditLogoScreen extends Component {
                                     </div>
                                 </div>
 
-                                    <div className="col-6" >
+                                    <div className="col-6">
 
-                                         <div id={"canvas"} style={{
+                                         <span id={"canvas"} style={{
                                              display: "inline-block",
                                              color: this.state.color ? this.state.color : data.logo.color,
                                              backgroundColor: this.state.backgroundColor ? this.state.backgroundColor : data.logo.backgroundColor,
@@ -249,34 +413,87 @@ class EditLogoScreen extends Component {
                                              padding: (this.state.padding ? this.state.padding : data.logo.padding) + "px",
                                              margin: (this.state.margin ? this.state.margin : data.logo.margin) + "px",
                                              width: (this.state.width ? this.state.width : data.logo.width) + "px",
-                                             height: (this.state.height ? this.state.height : data.logo.height) + "px"
+                                             height: (this.state.height ? this.state.height : data.logo.height) + "px",
+
+
+
                                          }}>
 
 
-                                             <Rnd
-                                                 bounds="#canvas"
-                                                 scale={1}
-                                                 enableResizing={"disable"}
-
-                                                 style={styles.rndStyle}
-                                                 onDrag={() => { this.setState({ border: "2px dotted red"}) }}
-
-                                                 onDragStop={() => { this.setState({ border: ""}) }}
-                                             >
-
-                                                 {this.state.text ? this.state.text :  data.logo.text}
 
 
-                                             </Rnd>
 
+                                             {( (this.state.text ? this.state.text : data.logo.text)).map((text, index) =>
+
+
+
+                                                 <Rnd
+
+                                                     bounds="#canvas"
+                                                     scale={1}
+                                                     enableResizing={"disable"}
+                                                     style={{/*border: "2px dotted red"*/}}
+                                                     onDragStop={() => this.removeText(index)}
 
 
 
 
+                                                 >
+                                                     <div>
+
+
+                                                         <p>{text}</p>
+
+                                                     </div>
 
 
 
-                                         </div>
+                                                 </Rnd>
+
+
+
+
+
+                                             )}
+
+                                             {( (this.state.images ? this.state.images : data.logo.images)).map((image, index) =>
+
+
+
+                                                 <Rnd
+
+                                                     bounds="#canvas"
+                                                     scale={1}
+
+                                                     onDragStop={() => this.removeImage(index)}
+                                                     style ={ { backgroundImage: `url(${image})`, backgroundRepeat: "no-repeat",  display: "flex",
+                                                         alignItems: "center",
+                                                         justifyContent: "center",
+                                                         border: "solid 1px #ddd",
+                                                         backgroundSize: "cover",
+                                                          }}
+
+
+                                                 >
+
+                                                     <span>&nbsp;&nbsp;</span>
+
+
+
+                                                 </Rnd>
+
+
+
+
+
+                                             )}
+
+
+                                         </span>
+
+
+
+
 
                                     </div>
 

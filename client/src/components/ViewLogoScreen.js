@@ -20,6 +20,7 @@ const GET_LOGO = gql`
             margin
             padding
             fontSize
+            images
             lastUpdate
             
         }
@@ -92,6 +93,8 @@ class ViewLogoScreen extends Component {
 
                                         <dt>Font Size:</dt>
                                         <dd>{data.logo.fontSize}</dd>
+                                        <dt>Images:</dt>
+                                        <dd>{data.logo.images}</dd>
                                         <dt>Last Updated:</dt>
                                         <dd>{data.logo.lastUpdate}</dd>
                                     </dl>
@@ -134,6 +137,8 @@ class ViewLogoScreen extends Component {
                                                     width: data.logo.width + "px",
                                                     height: data.logo.height + "px",
                                                 }}>{data.logo.text}</span>
+
+
 
                             </div>
                         </div>
