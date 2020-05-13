@@ -79,12 +79,8 @@ const UPDATE_LOGO = gql`
 
 class EditLogoScreen extends Component {
 
-
     constructor(props) {
         super(props);
-
-
-
 
         this.state = {
 
@@ -107,51 +103,39 @@ class EditLogoScreen extends Component {
             focus: null,
             focusImage: null
 
-
-
         };
 
     }
 
-
-
-removeText = (index) => {
-
+    //called by ondragstop rnd
+    removeText = (index) => {
         this.setState({focus: index});
         console.log(index)
-
-};
+    };
 
     removeImage = (index) => {
-
         this.setState({focusImage: index});
         console.log(index)
 
     };
 
-
-
-
-
-    dataParameters = (text, color, fontSize, backgroundColor, borderRadius, borderWidth, margin, padding, borderColor,width ,height ,images ,flag) => {
+    dataParameters = (text, color, fontSize, backgroundColor,
+                      borderRadius, borderWidth, margin, padding, borderColor,
+                      width ,height ,images ,flag) => {
         this.setState({text: text, color: color, fontSize:fontSize,
             backgroundColor:backgroundColor, borderRadius:borderRadius,
-            borderWidth:borderWidth, margin:margin, padding:padding, borderColor:borderColor,width: width ,height: height ,images: images ,flag:flag});
-
+            borderWidth:borderWidth, margin:margin, padding:padding, borderColor:borderColor,width: width
+            ,height: height ,images: images ,flag:flag});
     };
 
     render() {
 
         const styles = {
-
-
             rndStyle:{
                 width: "max-content",
                 border: this.state.border,
             },
-
         };
-
         const style = {
             display: "flex",
             alignItems: "center",
@@ -160,11 +144,8 @@ removeText = (index) => {
             background: "#f0f0f0"
         };
 
-
-
-
-
-        let text, text2 ,color, fontSize, backgroundColor, borderColor, borderRadius, borderWidth, margin, padding, width, height, images, image2;
+        let text, text2 ,color, fontSize, backgroundColor, borderColor, borderRadius,
+            borderWidth, margin, padding, width, height, images, image2;
 
         return (
             <Query query={GET_LOGO} variables={{ logoId: this.props.match.params.id }}>
@@ -173,30 +154,19 @@ removeText = (index) => {
                     if (error) return `Error! ${error.message}`;
 
                     if(this.state.flag === false){
-                        this.dataParameters(data.logo.text, data.logo.color, data.logo.fontSize,data.logo.backgroundColor, data.logo.borderRadius,
-                            data.logo.borderWidth, data.logo.margin, data.logo.padding, data.logo.borderColor,data.logo.width ,data.logo.height ,data.logo.images ,true
+                        this.dataParameters(data.logo.text, data.logo.color, data.logo.fontSize,data.logo.backgroundColor,
+                            data.logo.borderRadius, data.logo.borderWidth, data.logo.margin, data.logo.padding,
+                            data.logo.borderColor,data.logo.width ,data.logo.height ,data.logo.images ,true
                         );
                     }
-
 
                     return (
 
 
-
-
-
                         <Mutation  mutation={UPDATE_LOGO} key={data.logo._id} onCompleted={() => this.props.history.push(`/`)}>
                             {(updateLogo, { loading, error }) => (
-
                                 <div className="row">
-
-
-
-
-
                                 <div className="container col-sm-6">
-
-
                                     <div className="panel panel-default">
                                         <div className="panel-heading">
                                             <h4><Link to="/">Home</Link></h4>
@@ -207,9 +177,12 @@ removeText = (index) => {
                                         <div className="panel-body">
                                                     <form onSubmit={e => {
                                                     e.preventDefault();
-                                                updateLogo({ variables: {id:data.logo._id, text: this.state.text, width: parseInt(width.value), height: parseInt(height.value) ,color: color.value, backgroundColor: backgroundColor.value, borderColor:
-                                                        borderColor.value, borderRadius: parseInt(borderRadius.value), borderWidth: parseInt(borderWidth.value), margin:
-                                                            parseInt(margin.value), padding: parseInt(padding.value), fontSize: parseInt(fontSize.value), images: this.state.images } });
+                                                updateLogo({ variables: {id:data.logo._id, text: this.state.text, width: parseInt(width.value),
+                                                        height: parseInt(height.value) ,color: color.value, backgroundColor: backgroundColor.value, borderColor:
+                                                        borderColor.value, borderRadius: parseInt(borderRadius.value),
+                                                        borderWidth: parseInt(borderWidth.value), margin:
+                                                            parseInt(margin.value), padding: parseInt(padding.value),
+                                                        fontSize: parseInt(fontSize.value), images: this.state.images } });
 
                                                 text = [];
                                                 images = [];
@@ -252,8 +225,6 @@ removeText = (index) => {
                                                             }} onChange={() => this.setState({height: parseInt(height.value)})} placeholder={data.logo.height} defaultValue={data.logo.height} />
                                                         </div>
 
-
-
                                                         <div className="form-group col-8">
                                                         <label htmlFor="text">Text:</label>
                                                         <input type="text" value={this.state.possibletext} className="form-control" name="text" ref={node => {
@@ -262,12 +233,10 @@ removeText = (index) => {
 
                                                         <button type={"button"} className="btn btn-dark"
                                                                 onClick={() => {
-
                                                                     let tempText = this.state.text;
                                                                     tempText.push(this.state.possibletext);
                                                                     this.setState({text: tempText});
                                                                     this.setState({possibletext: ""});
-
                                                                 }}>
                                                             Add Text
                                                         </button>
@@ -281,7 +250,6 @@ removeText = (index) => {
 
                                                                    if(this.state.focus != null){
                                                                        { tempText.splice(this.state.focus, 1); }
-
                                                                    }
 
                                                                     this.setState({text: tempText});
@@ -425,34 +393,18 @@ removeText = (index) => {
 
                                              {( (this.state.text ? this.state.text : data.logo.text)).map((text, index) =>
 
-
-
                                                  <Rnd
-
                                                      bounds="#canvas"
                                                      scale={1}
                                                      enableResizing={"disable"}
                                                      style={{/*border: "2px dotted red"*/}}
                                                      onDragStop={() => this.removeText(index)}
-
-
-
-
                                                  >
                                                      <div>
-
-
                                                          <p>{text}</p>
-
                                                      </div>
 
-
-
                                                  </Rnd>
-
-
-
-
 
                                              )}
 
