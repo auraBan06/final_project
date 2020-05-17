@@ -20,7 +20,7 @@ const GET_LOGO = gql`
             margin
             padding
             
-            images
+            images{imageString, imageX, imageY, width, height}
             lastUpdate
             
         }

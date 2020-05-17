@@ -15,6 +15,75 @@ var LogoModel = require('../models/Logo');
 
 
 
+var imageInputType = new GraphQLInputObjectType({
+    name: 'imageInput',
+    fields: function () {
+        return {
+
+            imageString: {
+                type: GraphQLString
+            },
+            imageX:{
+                type: GraphQLFloat
+
+            },
+            imageY:{
+                type: GraphQLFloat
+
+            },
+            width:{
+                type: GraphQLFloat
+
+            },
+            height:{
+                type: GraphQLFloat
+
+            },
+
+
+        }
+    }
+});
+
+
+
+
+var imageObject = new GraphQLObjectType({
+    name: 'image',
+    fields: function () {
+        return {
+
+            imageString: {
+                type: GraphQLString
+            },
+            imageX:{
+                type: GraphQLFloat
+
+            },
+            imageY:{
+                type: GraphQLFloat
+
+            },
+            width:{
+                type: GraphQLFloat
+
+            },
+            height:{
+                type: GraphQLFloat
+
+            },
+
+
+        }
+    }
+});
+
+
+
+
+
+
+
 var textInputType = new GraphQLInputObjectType({
     name: 'textInput',
     fields: function () {
@@ -116,7 +185,7 @@ var logoType = new GraphQLObjectType({
             },
 
             images: {
-                type: new GraphQLList(GraphQLString)
+                type: new GraphQLList(imageObject)
             },
             lastUpdate: {
                 type: GraphQLDate
@@ -198,7 +267,7 @@ var mutation = new GraphQLObjectType({
                     },
 
                     images: {
-                        type: new GraphQLList(GraphQLString)
+                        type: new GraphQLList(imageInputType)
                     },
 
                 },
@@ -248,7 +317,7 @@ var mutation = new GraphQLObjectType({
                     },
 
                     images: {
-                        type: new GraphQLList(GraphQLString)
+                        type: new GraphQLList(imageInputType)
                     },
 
                 },

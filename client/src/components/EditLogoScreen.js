@@ -23,7 +23,7 @@ const GET_LOGO = gql`
             borderWidth
             margin
             padding
-            images
+            images{imageString, imageX, imageY, width, height}
             
         }
     }
@@ -45,7 +45,7 @@ const UPDATE_LOGO = gql`
         $padding: Int!,
         
       
-        $images: [String]!
+        $images: [imageInput]!
         ) {
             updateLogo(
                 id: $id,
@@ -101,8 +101,9 @@ class EditLogoScreen extends Component {
             possibletext: "",
             flag: false,
             Focus: {},
-            focusIndex: null,
-            focusImage: null,
+            focusIndex: "",
+            imageFocus: {},
+            imagefocusIndex: "",
             borderText: "",
             color: "",
             fontSize: "",
@@ -119,7 +120,7 @@ class EditLogoScreen extends Component {
         itemBeingMoved.posX = destination.x;
         itemBeingMoved.posY = destination.y;
         tempItems[index] = itemBeingMoved;
-        console.log(tempItems[index])
+        console.log(tempItems[index]);
         this.setState({
             text: tempItems,
 
@@ -127,8 +128,47 @@ class EditLogoScreen extends Component {
 
     };
 
+    changeImageLocation = (index, event, destination) => {
+
+        let tempItems = this.state.images;
+        let itemBeingMoved = tempItems[index];
+
+        itemBeingMoved.imageX = destination.x;
+        itemBeingMoved.imageY = destination.y;
+        tempItems[index] = itemBeingMoved;
+
+        this.setState({
+            images: tempItems,
+
+        });
+
+    };
 
 
+    resizeObject = (index, event, direction, ref, delta, position) => {
+
+        let tempItems = this.state.images;
+        let itemBeingResized = tempItems[index];
+
+        itemBeingResized.height = parseFloat(ref.style.height);
+        itemBeingResized.width = parseFloat(ref.style.width);
+
+        this.setState({
+
+            images: tempItems,
+
+        })
+
+    }
+
+    setImageFocus = (index) => {
+
+
+        this.setState({imageFocus: this.state.images[index]});
+        this.setState({imagefocusIndex: index});
+        console.log(this.state.imagefocusIndex)
+
+    };
 
     //called by ondragstop rnd
     setFocus = (index) => {
@@ -161,7 +201,7 @@ class EditLogoScreen extends Component {
 
 
 
-        if(this.state.focusIndex!= null){
+        if(this.state.focusIndex!== ""){
             let temp = this.state.text[this.state.focusIndex];
             temp.textColor = event.value;
             let tempArray = this.state.text;
@@ -176,9 +216,9 @@ class EditLogoScreen extends Component {
 
 
 
-        if(this.state.focusIndex!= null){
+        if(this.state.focusIndex!== ""){
             let temp = this.state.text[this.state.focusIndex];
-            temp.textFontSize = event.value;
+            temp.textFontSize = parseInt(event.value);
 
             let tempArray = this.state.text;
             tempArray[this.state.focusIndex] = temp;
@@ -206,6 +246,9 @@ class EditLogoScreen extends Component {
     };
 
     render() {
+
+        const MAX_LENGTH = 30;
+
 
         const styles = {
             rndStyle:{
@@ -309,7 +352,7 @@ class EditLogoScreen extends Component {
                                                             <label htmlFor="fontSize">Font Size:</label>
                                                             <input type="number" onInput={()=>{fontSize.value = clamp(fontSize.value, 4, 100);}} className="form-control" name="fontSize" ref={node => {
                                                                 fontSize = node;
-                                                            }} onChange={() => this.handleFontSizeChange(fontSize)} defaultValue={data.logo.text[0].textColor}/>
+                                                            }} onChange={() => this.handleFontSizeChange(fontSize)} />
                                                         </div>
 
                                                         <div className="form-group col-4">
@@ -350,18 +393,31 @@ class EditLogoScreen extends Component {
 
                                                         <button type={"button"} className="btn btn-dark"
                                                                 onClick={() => {
-                                                                    let tempText = this.state.text;
 
-                                                                   if(this.state.focus != null){
-                                                                       { tempText.splice(this.state.focus, 1); }
-                                                                   }
+                                                                    let tempText = this.state.text;
+                                                                    tempText.splice(this.state.focusIndex, 1);
+
 
                                                                     this.setState({text: tempText});
                                                                     this.setState({possibletext: ""});
+                                                                    this.setState({focusIndex: ""});
 
                                                                 }}>
                                                             Remove Selected Text
                                                         </button>
+
+                                                            <button type={"button"} className="btn btn-dark"
+                                                                    onClick={() => {
+
+
+                                                                        this.setState({Focus: {}});
+                                                                        this.setState({focusIndex: ""});
+
+                                                                    }}>
+                                                                Deselect Text
+                                                            </button>
+
+                                                <p style={{color:"red", backgroundColor: "black", margin: 5}}>Selected Text is: {(this.state.focusIndex !== "") ? <span>{this.state.text[this.state.focusIndex].textString}</span>: <span>None</span>}</p>
 
 
 
@@ -379,8 +435,21 @@ class EditLogoScreen extends Component {
                                                                     onClick={() => {
 
 
+
+
+
+
                                                                         let tempImages = this.state.images;
-                                                                        tempImages.push(this.state.possibleUrl);
+
+                                                                        let obj = {};
+                                                                        obj["imageString"] = this.state.possibleUrl;
+                                                                        obj["imageX"] = 0;
+                                                                        obj["imageY"] = 0;
+                                                                        obj["width"] = 100;
+                                                                        obj["height"] = 100;
+                                                                        console.log(obj.imageX);
+
+                                                                        tempImages.push(obj);
                                                                         this.setState({images: tempImages});
                                                                         this.setState({possibleUrl: ""});
 
@@ -393,19 +462,32 @@ class EditLogoScreen extends Component {
 
                                                             <button type={"button"} className="btn btn-dark"
                                                                     onClick={() => {
-                                                                        let tempImages = this.state.images;
-                                                                        if(this.state.focusImage != null){
-                                                                            { tempImages.splice(this.state.focusImage, 1); }
 
-                                                                        }
+
+
+                                                                        let tempImages = this.state.images;
+
+                                                                        tempImages.splice(this.state.imagefocusIndex, 1);
+
                                                                         this.setState({images: tempImages});
+                                                                        this.setState({imageFocus: {}});
+                                                                        this.setState({imagefocusIndex: ""});
 
                                                                     }}>
                                                                 Remove Selected Image
                                                             </button>
+                                                            <button type={"button"} className="btn btn-dark"
+                                                                    onClick={() => {
 
 
+                                                                        this.setState({imageFocus: {}});
+                                                                        this.setState({imagefocusIndex: ""});
 
+                                                                    }}>
+                                                                Deselect Image
+                                                            </button>
+
+                                                            <p style={{color:"red", backgroundColor: "black", margin: 5, overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis"}}>Selected Image is: {(this.state.imagefocusIndex !== "") ? <span>{this.state.images[this.state.imagefocusIndex].imageString}</span>: <span>None</span>}</p>
 
                                                         </div>
 
@@ -501,7 +583,7 @@ class EditLogoScreen extends Component {
                                                          style={{
 
                                                              color: this.state.text[index].textColor ? this.state.text[index].textColor : data.logo.text[index].textColor,
-                                                             fontSize: this.state.text[index].textFontSize + "px",
+                                                             fontSize: this.state.text[index].textFontSize ? this.state.text[index].textFontSize : data.logo.text[index].textFontSize + "px",
 
 
 
@@ -526,9 +608,16 @@ class EditLogoScreen extends Component {
                                                      bounds="#canvas"
                                                      scale={1}
 
-                                                     onDragStop={() => this.removeImage(index)}
+                                                     onDragStop={(event, destination) => this.changeImageLocation(index, event, destination)}
+                                                     onResizeStop={(event, direction, ref, delta, position) => this.resizeObject(index, event, direction, ref, delta, position)}
+                                                     default={{
+                                                         x: image.imageX,
+                                                         y: image.imageY,
+                                                         width: image.width + "px",
+                                                         height: image.height + "px"
+                                                     }}
 
-                                                     style ={ { backgroundImage: `url(${image})`, backgroundRepeat: "no-repeat",  display: "flex",
+                                                     style ={ { backgroundImage: `url(${image.imageString})`, backgroundRepeat: "no-repeat",  display: "flex",
                                                          alignItems: "center",
                                                          justifyContent: "center",
                                                          border: "solid 1px #ddd",
@@ -538,7 +627,7 @@ class EditLogoScreen extends Component {
 
                                                  >
 
-                                                     <span>&nbsp;&nbsp;</span>
+                                                     <div style={{width: image.width + "px", height: image.height + "px"}} onClick={() => this.setImageFocus(index)}>&nbsp;&nbsp;</div>
 
 
 
