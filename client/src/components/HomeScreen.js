@@ -8,7 +8,7 @@ const GET_LOGOS = gql`
   {
     logos {
       _id
-      text
+      text{textString, textFontSize, posX, posY, textColor}
       lastUpdate
     }
   }
@@ -39,7 +39,7 @@ class HomeScreen extends Component {
 
 
                                         <Link to={`/view/${logo._id}`}> <div key={index} className='home_logo_link'
-                                                                             style={logoStyle} >{logo.text.map(text => <span>{text}</span>)}</div></Link>
+                                                                             style={logoStyle} >{logo.text.map(text => <span>{text.textString}</span>)}</div></Link>
 
                                 ))}
                             </div>

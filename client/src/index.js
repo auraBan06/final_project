@@ -11,8 +11,22 @@ import HomeScreen from './components/HomeScreen';
 import EditLogoScreen from './components/EditLogoScreen';
 import CreateLogoScreen from './components/CreateLogoScreen';
 import ViewLogoScreen from './components/ViewLogoScreen';
+import {InMemoryCache} from "apollo-cache-inmemory";
+import {HttpLink} from "apollo-link-http";
 
-const client = new ApolloClient({ uri: 'http://localhost:3000/graphql' });
+
+const client = new ApolloClient({
+    uri: "http://localhost:3000/graphql",
+    cache: new InMemoryCache({
+        addTypename: false
+    })
+});
+
+
+
+
+
+
 
 ReactDOM.render(
     <ApolloProvider client={client}>

@@ -9,17 +9,17 @@ const GET_LOGO = gql`
     query logo($logoId: String) {
         logo(id: $logoId) {
              _id
-            text
+            text{textString, textFontSize, posX, posY, textColor}
             width
             height
-            color
+            
             backgroundColor
             borderColor
             borderRadius
             borderWidth
             margin
             padding
-            fontSize
+            
             images
             lastUpdate
             
@@ -65,9 +65,9 @@ class ViewLogoScreen extends Component {
                                         <dd>{data.logo.height}</dd>
 
                                         <dt>Text:</dt>
-                                        <dd>{data.logo.text}</dd>
+                                        <dd>{data.logo.text[0].textString}</dd>
                                         <dt>Color:</dt>
-                                        <dd>{data.logo.color}</dd>
+
 
                                         <dt>Background Color:</dt>
                                         <dd>{data.logo.backgroundColor}</dd>
@@ -92,7 +92,7 @@ class ViewLogoScreen extends Component {
 
 
                                         <dt>Font Size:</dt>
-                                        <dd>{data.logo.fontSize}</dd>
+
                                         <dt>Images:</dt>
                                         <dd>{data.logo.images}</dd>
                                         <dt>Last Updated:</dt>
@@ -125,18 +125,18 @@ class ViewLogoScreen extends Component {
 
                                                 <span style={{
                                                     display: "inline-block",
-                                                    color: data.logo.color,
+
                                                     backgroundColor: data.logo.backgroundColor,
                                                     borderColor: data.logo.borderColor,
                                                     borderStyle: "solid",
-                                                    fontSize: data.logo.fontSize + "px",
+
                                                     borderWidth: data.logo.borderWidth + "px",
                                                     borderRadius: data.logo.borderRadius + "px",
                                                     padding: data.logo.padding + "px",
                                                     margin: data.logo.margin + "px",
                                                     width: data.logo.width + "px",
                                                     height: data.logo.height + "px",
-                                                }}>{data.logo.text}</span>
+                                                }}>{data.logo.text.textString}</span>
 
 
 

@@ -1,7 +1,9 @@
+var GraphQLFloat = require('graphql').GraphQLFloat;
+
+var GraphQLInputObjectType = require('graphql').GraphQLInputObjectType;
 var GraphQLSchema = require('graphql').GraphQLSchema;
 var GraphQLObjectType = require('graphql').GraphQLObjectType;
 var GraphQLList = require('graphql').GraphQLList;
-var GraphQLObjectType = require('graphql').GraphQLObjectType;
 var GraphQLNonNull = require('graphql').GraphQLNonNull;
 var GraphQLID = require('graphql').GraphQLID;
 var GraphQLString = require('graphql').GraphQLString;
@@ -13,9 +15,64 @@ var LogoModel = require('../models/Logo');
 
 
 
+var textInputType = new GraphQLInputObjectType({
+    name: 'textInput',
+    fields: function () {
+        return {
+
+            textString: {
+                type: GraphQLString
+            },
+            textFontSize:{
+                type: GraphQLInt
+
+            },
+            posX:{
+                type: GraphQLFloat
+
+            },
+            posY:{
+                type: GraphQLFloat
+
+            },
+            textColor:{
+                type: GraphQLString
+
+            },
 
 
+        }
+    }
+});
 
+var textObject = new GraphQLObjectType({
+    name: 'text',
+    fields: function () {
+        return {
+
+            textString: {
+                type: GraphQLString
+            },
+            textFontSize:{
+                type: GraphQLInt
+            },
+            posX:{
+                type: GraphQLFloat
+
+            },
+            posY:{
+                type: GraphQLFloat
+
+            },
+            textColor:{
+                type: GraphQLString
+
+            },
+
+
+        }
+    }
+});
 
 
 
@@ -30,7 +87,7 @@ var logoType = new GraphQLObjectType({
                 type: GraphQLString
             },
             text: {
-                type: new GraphQLList(GraphQLString)
+                type: new GraphQLList(textObject)
             },
             width: {
                 type: GraphQLInt
@@ -38,9 +95,7 @@ var logoType = new GraphQLObjectType({
             height: {
                 type: GraphQLInt
             },
-            color: {
-                type: GraphQLString
-            },
+
             backgroundColor: {
                 type: GraphQLString
             },
@@ -59,9 +114,7 @@ var logoType = new GraphQLObjectType({
             padding: {
                 type: GraphQLInt
             },
-            fontSize: {
-                type: GraphQLInt
-            },
+
             images: {
                 type: new GraphQLList(GraphQLString)
             },
@@ -115,7 +168,7 @@ var mutation = new GraphQLObjectType({
                 type: logoType,
                 args: {
                     text: {
-                        type: new GraphQLNonNull(GraphQLList(GraphQLString))
+                        type: new GraphQLList(textInputType)
                     },
                     width: {
                         type: new GraphQLNonNull(GraphQLInt)
@@ -123,12 +176,11 @@ var mutation = new GraphQLObjectType({
                     height: {
                         type: new GraphQLNonNull(GraphQLInt)
                     },
-                    color: {
-                        type: new GraphQLNonNull(GraphQLString)
-                    },
+
                     backgroundColor: {
                         type: new GraphQLNonNull(GraphQLString)
                     },
+
                     borderColor: {
                         type: new GraphQLNonNull(GraphQLString)
                     },
@@ -144,9 +196,7 @@ var mutation = new GraphQLObjectType({
                     padding: {
                         type: new GraphQLNonNull(GraphQLInt)
                     },
-                    fontSize: {
-                        type: new GraphQLNonNull(GraphQLInt)
-                    },
+
                     images: {
                         type: new GraphQLList(GraphQLString)
                     },
@@ -169,7 +219,7 @@ var mutation = new GraphQLObjectType({
                         type: new GraphQLNonNull(GraphQLString)
                     },
                     text: {
-                        type: new GraphQLNonNull(GraphQLList(GraphQLString))
+                        type: new GraphQLList(textInputType)
                     },
                     width: {
                         type: new GraphQLNonNull(GraphQLInt)
@@ -177,9 +227,7 @@ var mutation = new GraphQLObjectType({
                     height: {
                         type: new GraphQLNonNull(GraphQLInt)
                     },
-                    color: {
-                        type: new GraphQLNonNull(GraphQLString)
-                    },
+
                     backgroundColor: {
                         type: new GraphQLNonNull(GraphQLString)
                     },
@@ -198,19 +246,17 @@ var mutation = new GraphQLObjectType({
                     padding: {
                         type: new GraphQLNonNull(GraphQLInt)
                     },
-                    fontSize: {
-                        type: new GraphQLNonNull(GraphQLInt)
-                    },
+
                     images: {
                         type: new GraphQLList(GraphQLString)
                     },
 
                 },
                 resolve(root, params) {
-                    return LogoModel.findByIdAndUpdate(params.id, { text: params.text, width: params.width, height: params.height, color: params.color, backgroundColor: params.backgroundColor,
+                    return LogoModel.findByIdAndUpdate(params.id, { text: params.text, width: params.width, height: params.height, backgroundColor: params.backgroundColor,
                         borderColor: params.borderColor,
                         borderRadius: params.borderRadius, borderWidth: params.borderWidth, margin: params.margin, padding:
-                        params.padding, fontSize: params.fontSize, images: params.images ,lastUpdate: new Date() }, function (err) {
+                        params.padding, images: params.images ,lastUpdate: new Date() }, function (err) {
                         if (err) return next(err);
                     });
                 }

@@ -7,8 +7,6 @@ import download from 'downloadjs';
 import {Rnd} from "react-rnd";
 import {clamp} from "../utils/utlity";
 
-import ResizeImage from 'react-resize-image'
-import { Resizable, ResizableBox } from 'react-resizable';
 
 
 
@@ -16,17 +14,15 @@ const GET_LOGO = gql`
     query logo($logoId: String) {
         logo(id: $logoId) {
             _id
-            text
+            text{textString, textFontSize, posX, posY, textColor}
             width
             height
-            color
             backgroundColor
             borderColor
             borderRadius
             borderWidth
             margin
             padding
-            fontSize
             images
             
         }
@@ -34,13 +30,13 @@ const GET_LOGO = gql`
 `;
 
 const UPDATE_LOGO = gql`
+
     mutation updateLogo(
         $id: String!,
-        $text: [String]!,
-        
+        $text: [textInput]!,
         $width: Int!,
         $height: Int!,
-        $color: String!,
+       
         $backgroundColor: String!,
         $borderColor: String!,
         $borderRadius: Int!,
@@ -48,7 +44,7 @@ const UPDATE_LOGO = gql`
         $margin: Int!,
         $padding: Int!,
         
-        $fontSize: Int!
+      
         $images: [String]!
         ) {
             updateLogo(
@@ -56,7 +52,7 @@ const UPDATE_LOGO = gql`
                 text: $text,
                 width: $width,
                 height: $height,
-                color: $color,
+               
                 backgroundColor: $backgroundColor,
                 borderColor: $borderColor,
                 
@@ -65,7 +61,7 @@ const UPDATE_LOGO = gql`
                 margin: $margin,
                 padding: $padding,
                 
-                fontSize: $fontSize
+                
                 images: $images
                 
                 
@@ -77,6 +73,8 @@ const UPDATE_LOGO = gql`
         }
 `;
 
+
+
 class EditLogoScreen extends Component {
 
     constructor(props) {
@@ -87,8 +85,8 @@ class EditLogoScreen extends Component {
             text: [],
             width: "",
             height: "",
-            color : "",
-            fontSize : "",
+
+
             backgroundColor: "",
             borderRadius: "",
             borderWidth: "",
@@ -96,22 +94,101 @@ class EditLogoScreen extends Component {
             padding: "",
             borderColor: "",
             images: [],
+
+
+
             possibleUrl: "",
             possibletext: "",
-
             flag: false,
-            focus: null,
-            focusImage: null
+            Focus: {},
+            focusIndex: null,
+            focusImage: null,
+            borderText: "",
+            color: "",
+            fontSize: "",
 
         };
 
     }
 
+    changeObjectLocation = (index, event, destination) => {
+
+        let tempItems = this.state.text;
+        let itemBeingMoved = tempItems[index];
+
+        itemBeingMoved.posX = destination.x;
+        itemBeingMoved.posY = destination.y;
+        tempItems[index] = itemBeingMoved;
+        console.log(tempItems[index])
+        this.setState({
+            text: tempItems,
+
+        });
+
+    };
+
+
+
+
     //called by ondragstop rnd
-    removeText = (index) => {
+    setFocus = (index) => {
+
+
+        this.setState({Focus: this.state.text[index]});
+        this.setState({focusIndex: index});
+
+
+    };
+
+    changeColor = () => {
+
+            console.log(this.state.focus)
+
+
+    };
+
+
+    changeBorder = (index) => {
+
         this.setState({focus: index});
+        this.setState({borderText: "2px dotted red"});
         console.log(index)
     };
+
+
+    handleTextColorChange = (event) => {
+
+
+
+
+        if(this.state.focusIndex!= null){
+            let temp = this.state.text[this.state.focusIndex];
+            temp.textColor = event.value;
+            let tempArray = this.state.text;
+            tempArray[this.state.focusIndex] = temp;
+            this.setState({text: tempArray})
+        }
+
+    };
+
+    handleFontSizeChange = (event) => {
+
+
+
+
+        if(this.state.focusIndex!= null){
+            let temp = this.state.text[this.state.focusIndex];
+            temp.textFontSize = event.value;
+
+            let tempArray = this.state.text;
+            tempArray[this.state.focusIndex] = temp;
+            this.setState({text: tempArray})
+        }
+
+    };
+
+
+
 
     removeImage = (index) => {
         this.setState({focusImage: index});
@@ -119,10 +196,10 @@ class EditLogoScreen extends Component {
 
     };
 
-    dataParameters = (text, color, fontSize, backgroundColor,
+    dataParameters = (text, backgroundColor,
                       borderRadius, borderWidth, margin, padding, borderColor,
                       width ,height ,images ,flag) => {
-        this.setState({text: text, color: color, fontSize:fontSize,
+        this.setState({text: text,
             backgroundColor:backgroundColor, borderRadius:borderRadius,
             borderWidth:borderWidth, margin:margin, padding:padding, borderColor:borderColor,width: width
             ,height: height ,images: images ,flag:flag});
@@ -133,7 +210,7 @@ class EditLogoScreen extends Component {
         const styles = {
             rndStyle:{
                 width: "max-content",
-                border: this.state.border,
+                border: this.state.borderText,
             },
         };
         const style = {
@@ -154,7 +231,7 @@ class EditLogoScreen extends Component {
                     if (error) return `Error! ${error.message}`;
 
                     if(this.state.flag === false){
-                        this.dataParameters(data.logo.text, data.logo.color, data.logo.fontSize,data.logo.backgroundColor,
+                        this.dataParameters(data.logo.text, data.logo.backgroundColor,
                             data.logo.borderRadius, data.logo.borderWidth, data.logo.margin, data.logo.padding,
                             data.logo.borderColor,data.logo.width ,data.logo.height ,data.logo.images ,true
                         );
@@ -178,13 +255,16 @@ class EditLogoScreen extends Component {
                                                     <form onSubmit={e => {
                                                     e.preventDefault();
                                                 updateLogo({ variables: {id:data.logo._id, text: this.state.text, width: parseInt(width.value),
-                                                        height: parseInt(height.value) ,color: color.value, backgroundColor: backgroundColor.value, borderColor:
+                                                        height: parseInt(height.value), backgroundColor: backgroundColor.value, borderColor:
                                                         borderColor.value, borderRadius: parseInt(borderRadius.value),
                                                         borderWidth: parseInt(borderWidth.value), margin:
                                                             parseInt(margin.value), padding: parseInt(padding.value),
-                                                        fontSize: parseInt(fontSize.value), images: this.state.images } });
+                                                     images: this.state.images } });
 
-                                                text = [];
+                                                        text= [
+
+                                                        ]
+                                                        ;
                                                 images = [];
                                                 text2 = "";
                                                 width.value = "";
@@ -226,6 +306,20 @@ class EditLogoScreen extends Component {
                                                         </div>
 
                                                         <div className="form-group col-8">
+                                                            <label htmlFor="fontSize">Font Size:</label>
+                                                            <input type="number" onInput={()=>{fontSize.value = clamp(fontSize.value, 4, 100);}} className="form-control" name="fontSize" ref={node => {
+                                                                fontSize = node;
+                                                            }} onChange={() => this.handleFontSizeChange(fontSize)} defaultValue={data.logo.text[0].textColor}/>
+                                                        </div>
+
+                                                        <div className="form-group col-4">
+                                                            <label htmlFor="color">Color:</label>
+                                                            <input type="color" className="form-control" name="color" ref={node => {
+                                                                color = node;
+                                                            }} onChange={() => this.handleTextColorChange(color)}  placeholder={this.state.Focus.textColor} defaultValue={this.state.Focus.textColor} />
+                                                        </div>
+
+                                                        <div className="form-group col-8">
                                                         <label htmlFor="text">Text:</label>
                                                         <input type="text" value={this.state.possibletext} className="form-control" name="text" ref={node => {
                                                             text2 = node;
@@ -234,9 +328,19 @@ class EditLogoScreen extends Component {
                                                         <button type={"button"} className="btn btn-dark"
                                                                 onClick={() => {
                                                                     let tempText = this.state.text;
-                                                                    tempText.push(this.state.possibletext);
+                                                                    let obj = {};
+                                                                    obj["textString"] = this.state.possibletext;
+                                                                    obj["textColor"] = color.value;
+                                                                    obj["textFontSize"] = parseInt(fontSize.value);
+                                                                    obj["posX"] = 0;
+                                                                    obj["posY"] = 0;
+
+                                                                   tempText.push(obj);
+
                                                                     this.setState({text: tempText});
                                                                     this.setState({possibletext: ""});
+                                                                    console.log(this.state.text);
+
                                                                 }}>
                                                             Add Text
                                                         </button>
@@ -278,11 +382,7 @@ class EditLogoScreen extends Component {
                                                                         let tempImages = this.state.images;
                                                                         tempImages.push(this.state.possibleUrl);
                                                                         this.setState({images: tempImages});
-                                                                        this.setState({possibletext: ""});
-
-
-
-
+                                                                        this.setState({possibleUrl: ""});
 
                                                                     }}>
                                                                 Add Image
@@ -311,12 +411,7 @@ class EditLogoScreen extends Component {
 
 
 
-                                                        <div className="form-group col-4">
-                                                            <label htmlFor="color">Color:</label>
-                                                            <input type="color" className="form-control" name="color" ref={node => {
-                                                                color = node;
-                                                            }} onChange={() => this.setState({color: color.value})} placeholder={data.logo.color} defaultValue={data.logo.color} />
-                                                        </div>
+
                                                         <div className="form-group col-4">
                                                             <label htmlFor="backgroundColor">Background Color:</label>
                                                             <input type="color" className="form-control" name="backgroundColor" ref={node => {
@@ -329,12 +424,7 @@ class EditLogoScreen extends Component {
                                                                 borderColor = node;
                                                             }} onChange={() => this.setState({borderColor: borderColor.value})} placeholder={data.logo.color} defaultValue={data.logo.borderColor} />
                                                         </div>
-                                                        <div className="form-group col-8">
-                                                            <label htmlFor="fontSize">Font Size:</label>
-                                                            <input type="number" onInput={()=>{fontSize.value = clamp(fontSize.value, 4, 100);}} className="form-control" name="fontSize" ref={node => {
-                                                                fontSize = node;
-                                                            }} onChange={() => this.setState({fontSize: parseInt(fontSize.value)})} placeholder={data.logo.fontSize} defaultValue={data.logo.fontSize} />
-                                                        </div>
+
                                                         <div className="form-group col-8">
                                                             <label htmlFor="borderWidth">Border Width:</label>
                                                             <input type="number" onInput={()=>{borderWidth.value = clamp(borderWidth.value, 0, 100);}} className="form-control" name="borderWidth" ref={node => {
@@ -371,11 +461,10 @@ class EditLogoScreen extends Component {
 
                                          <span id={"canvas"} style={{
                                              display: "inline-block",
-                                             color: this.state.color ? this.state.color : data.logo.color,
+
                                              backgroundColor: this.state.backgroundColor ? this.state.backgroundColor : data.logo.backgroundColor,
                                              borderColor: this.state.borderColor ? this.state.borderColor : data.logo.borderColor,
                                              borderStyle: "solid",
-                                             fontSize: (this.state.fontSize ? this.state.fontSize : data.logo.fontSize) + "px",
                                              borderWidth: (this.state.borderWidth ? this.state.borderWidth : data.logo.borderWidth) + "px",
                                              borderRadius: (this.state.borderRadius ? this.state.borderRadius : data.logo.borderRadius) + "px",
                                              padding: (this.state.padding ? this.state.padding : data.logo.padding) + "px",
@@ -397,11 +486,31 @@ class EditLogoScreen extends Component {
                                                      bounds="#canvas"
                                                      scale={1}
                                                      enableResizing={"disable"}
-                                                     style={{/*border: "2px dotted red"*/}}
-                                                     onDragStop={() => this.removeText(index)}
+                                                     style={styles.rndStyle}
+
+                                                     onDragStop={(event, destination) => this.changeObjectLocation(index, event, destination)}
+
+                                                     default={{
+                                                         x: text.posX,
+                                                         y: text.posY,
+
+                                                     }}
                                                  >
-                                                     <div>
-                                                         <p>{text}</p>
+                                                     <div onClick={() => this.setFocus(index)}
+
+                                                         style={{
+
+                                                             color: this.state.text[index].textColor ? this.state.text[index].textColor : data.logo.text[index].textColor,
+                                                             fontSize: this.state.text[index].textFontSize + "px",
+
+
+
+                                                         }}
+
+                                                     >
+
+                                                             {text.textString}
+
                                                      </div>
 
                                                  </Rnd>
@@ -418,6 +527,7 @@ class EditLogoScreen extends Component {
                                                      scale={1}
 
                                                      onDragStop={() => this.removeImage(index)}
+
                                                      style ={ { backgroundImage: `url(${image})`, backgroundRepeat: "no-repeat",  display: "flex",
                                                          alignItems: "center",
                                                          justifyContent: "center",

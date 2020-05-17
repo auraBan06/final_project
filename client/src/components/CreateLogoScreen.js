@@ -8,10 +8,10 @@ import {Rnd} from "react-rnd";
 
 const ADD_LOGO = gql`
     mutation AddLogo(
-        $text: [String]!,
+        $text: [textInput]!,
         $width: Int!,
         $height: Int!,
-        $color: String!,
+        
         $backgroundColor: String!,
         $borderColor: String!,
         $borderRadius: Int!,
@@ -19,19 +19,19 @@ const ADD_LOGO = gql`
         $margin: Int!,
         $padding: Int!,
        
-        $fontSize: Int!) {
+        ) {
         addLogo(
             text: $text,
             width: $width,
             height: $height,
-            color: $color,
+           
             backgroundColor: $backgroundColor,
             borderColor: $borderColor,
             borderRadius: $borderRadius,
             borderWidth: $borderWidth,
             margin: $margin,
             padding: $padding,
-            fontSize: $fontSize) {
+            ) {
             _id
         }
     }
