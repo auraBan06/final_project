@@ -6,6 +6,7 @@ import htmlToImage from 'html-to-image';
 import download from 'downloadjs';
 import {Rnd} from "react-rnd";
 import {clamp} from "../utils/utlity";
+import html2canvas from "html2canvas";
 
 
 
@@ -108,6 +109,8 @@ class EditLogoScreen extends Component {
             color: "",
             fontSize: "",
 
+            addDisabled: false
+
         };
 
     }
@@ -173,7 +176,7 @@ class EditLogoScreen extends Component {
     //called by ondragstop rnd
     setFocus = (index) => {
 
-
+        this.setState({addDisabled: true});
         this.setState({Focus: this.state.text[index]});
         this.setState({focusIndex: index});
 
@@ -228,6 +231,18 @@ class EditLogoScreen extends Component {
     };
 
 
+    exportToJPG() {
+        window.scrollTo(0, 0);
+        var container = document.getElementById("canvas");
+        html2canvas(container, {allowTaint:true}).then(function(canvas) {
+            var link = document.createElement("a");
+            document.body.appendChild(link);
+            link.download = "Logo";
+            link.href = canvas.toDataURL();
+            link.target = '_blank';
+            link.click();
+        });
+    }
 
 
     removeImage = (index) => {
@@ -253,7 +268,7 @@ class EditLogoScreen extends Component {
         const styles = {
             rndStyle:{
                 width: "max-content",
-                border: this.state.borderText,
+
             },
         };
         const style = {
@@ -326,10 +341,9 @@ class EditLogoScreen extends Component {
 
                                                         <div>
 
-                                                            <button type={"button"} class="btn btn-dark" onClick={() => htmlToImage.toPng(document.getElementById('canvas'))
-                                                                .then(function (dataUrl) {
-                                                                    download(dataUrl, 'my-node.png');
-                                                                })}>
+                                                            <button type={"button"} class="btn btn-dark" onClick={() => this.exportToJPG()
+
+                                                            }>
                                                                 Export Logo
                                                             </button>
 
@@ -368,22 +382,36 @@ class EditLogoScreen extends Component {
                                                             text2 = node;
                                                         }} onChange={() => this.setState({possibletext: text2.value})}/>
 
-                                                        <button type={"button"} className="btn btn-dark"
+                                                        <button type={"button"} disabled={this.state.addDisabled} className="btn btn-dark"
                                                                 onClick={() => {
-                                                                    let tempText = this.state.text;
-                                                                    let obj = {};
-                                                                    obj["textString"] = this.state.possibletext;
-                                                                    obj["textColor"] = color.value;
-                                                                    obj["textFontSize"] = parseInt(fontSize.value);
-                                                                    obj["posX"] = 0;
-                                                                    obj["posY"] = 0;
 
-                                                                   tempText.push(obj);
+                                                                    let temp1 = this.state.possibletext.trim();
 
-                                                                    this.setState({text: tempText});
-                                                                    this.setState({possibletext: ""});
+
+                                                                        if(temp1 !== ""){
+
+                                                                            let tempText = this.state.text;
+                                                                            let obj = {};
+                                                                            obj["textString"] = this.state.possibletext;
+                                                                            obj["textColor"] = color.value;
+                                                                            obj["textFontSize"] = parseInt(fontSize.value);
+                                                                            obj["posX"] = 0;
+                                                                            obj["posY"] = 0;
+
+                                                                            tempText.push(obj);
+
+                                                                            this.setState({text: tempText});
+                                                                            this.setState({possibletext: ""});
+
+
+                                                                        }
+
+
+
+
+
+
                                                                     console.log(this.state.text);
-
                                                                 }}>
                                                             Add Text
                                                         </button>
@@ -394,6 +422,8 @@ class EditLogoScreen extends Component {
                                                         <button type={"button"} className="btn btn-dark"
                                                                 onClick={() => {
 
+
+
                                                                     let tempText = this.state.text;
                                                                     tempText.splice(this.state.focusIndex, 1);
 
@@ -401,6 +431,8 @@ class EditLogoScreen extends Component {
                                                                     this.setState({text: tempText});
                                                                     this.setState({possibletext: ""});
                                                                     this.setState({focusIndex: ""});
+                                                                    this.setState({addDisabled: false});
+                                                                    console.log(this.state.text)
 
                                                                 }}>
                                                             Remove Selected Text
@@ -412,6 +444,7 @@ class EditLogoScreen extends Component {
 
                                                                         this.setState({Focus: {}});
                                                                         this.setState({focusIndex: ""});
+                                                                        this.setState({addDisabled: false});
 
                                                                     }}>
                                                                 Deselect Text

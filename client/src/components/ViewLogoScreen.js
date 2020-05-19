@@ -3,25 +3,23 @@ import { Link } from 'react-router-dom';
 import '../App.css';
 import gql from 'graphql-tag';
 import { Query, Mutation } from 'react-apollo';
+import {Rnd} from "react-rnd";
 
 
 const GET_LOGO = gql`
     query logo($logoId: String) {
         logo(id: $logoId) {
-             _id
+            _id
             text{textString, textFontSize, posX, posY, textColor}
             width
             height
-            
             backgroundColor
             borderColor
             borderRadius
             borderWidth
             margin
             padding
-            
             images{imageString, imageX, imageY, width, height}
-            lastUpdate
             
         }
     }
@@ -65,7 +63,10 @@ class ViewLogoScreen extends Component {
                                         <dd>{data.logo.height}</dd>
 
                                         <dt>Text:</dt>
-                                        <dd>{data.logo.text[0].textString}</dd>
+                                        {( (data.logo.text)).map((text, index) =>
+
+                                            <span>{text.textString} </span>)}
+
                                         <dt>Color:</dt>
 
 
@@ -94,7 +95,12 @@ class ViewLogoScreen extends Component {
                                         <dt>Font Size:</dt>
 
                                         <dt>Images:</dt>
-                                        <dd>{data.logo.images}</dd>
+
+                                        {( (data.logo.images)).map((image, index) =>
+
+                                            <p style={{width: 300 ,overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis"}}>{image.imageString} </p>)}
+
+
                                         <dt>Last Updated:</dt>
                                         <dd>{data.logo.lastUpdate}</dd>
                                     </dl>
@@ -123,20 +129,105 @@ class ViewLogoScreen extends Component {
                         </div>
                             <div className="col-sm-6">
 
-                                                <span style={{
+                                                <span id={"canvas"} style={{
                                                     display: "inline-block",
 
                                                     backgroundColor: data.logo.backgroundColor,
                                                     borderColor: data.logo.borderColor,
                                                     borderStyle: "solid",
+                                                    borderWidth: (data.logo.borderWidth) + "px",
+                                                    borderRadius: (data.logo.borderRadius) + "px",
+                                                    padding: ( data.logo.padding) + "px",
+                                                    margin: (data.logo.margin) + "px",
+                                                    width: (data.logo.width) + "px",
+                                                    height: (data.logo.height) + "px",
 
-                                                    borderWidth: data.logo.borderWidth + "px",
-                                                    borderRadius: data.logo.borderRadius + "px",
-                                                    padding: data.logo.padding + "px",
-                                                    margin: data.logo.margin + "px",
-                                                    width: data.logo.width + "px",
-                                                    height: data.logo.height + "px",
-                                                }}>{data.logo.text.textString}</span>
+
+
+                                                }}>
+
+
+
+
+
+                                             {( (data.logo.text)).map((text, index) =>
+
+                                                 <Rnd
+                                                     bounds="#canvas"
+                                                     scale={1}
+                                                     enableResizing={"disable"}
+
+
+
+
+                                                     default={{
+                                                         x: text.posX,
+                                                         y: text.posY,
+
+                                                     }}
+                                                 >
+                                                     <div
+
+                                                          style={{
+
+                                                              color: data.logo.text[index].textColor,
+                                                              fontSize: data.logo.text[index].textFontSize + "px",
+
+
+
+                                                          }}
+
+                                                     >
+
+                                                         {text.textString}
+
+                                                     </div>
+
+                                                 </Rnd>
+
+                                             )}
+
+                                                    {( (data.logo.images)).map((image, index) =>
+
+
+
+                                                        <Rnd
+
+                                                            bounds="#canvas"
+                                                            scale={1}
+                                                            disableDragging={"false"}
+                                                            enableResizing={"disable"}
+                                                            default={{
+                                                                x: image.imageX,
+                                                                y: image.imageY,
+                                                                width: image.width + "px",
+                                                                height: image.height + "px"
+                                                            }}
+
+                                                            style ={ { backgroundImage: `url(${image.imageString})`, backgroundRepeat: "no-repeat",  display: "flex",
+                                                                alignItems: "center",
+                                                                justifyContent: "center",
+                                                                border: "solid 1px #ddd",
+                                                                backgroundSize: "cover",
+                                                            }}
+
+
+                                                        >
+
+                                                            <div style={{width: image.width + "px", height: image.height + "px"}} >&nbsp;&nbsp;</div>
+
+
+
+                                                        </Rnd>
+
+
+
+
+
+                                                    )}
+
+
+                                         </span>
 
 
 
